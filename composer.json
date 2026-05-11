@@ -1,9 +1,9 @@
 {
-    "name": "irabbi360/laravel-php-proxmox",
-    "description": "A PHP package for Proxmox API integration",
+    "name": "cycoslave/laravel-php-proxmox",
+    "description": "A PHP package for Proxmox API integration (multi-connection capable fork)",
     "type": "library",
     "license": "MIT",
-    "homepage": "https://github.com/irabbi360/laravel-php-proxmox",
+    "homepage": "https://github.com/cycoslave/laravel-php-proxmox",
     "keywords": [
         "Fazle Rabbi",
         "laravel",
@@ -19,6 +19,11 @@
             "name": "Fazle Rabbi",
             "email": "fazrabbi360@gmail.com",
             "role": "Developer"
+        },
+        {
+            "name": "Tony Roy",
+            "email": "tonyroy@wcksoft.com",
+            "role": "Maintainer (fork)"
         }
     ],
     "autoload": {
