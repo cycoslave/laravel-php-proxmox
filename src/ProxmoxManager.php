@@ -37,10 +37,11 @@ class ProxmoxManager
     }
 
     /**
-     * Magic entrypoint so you can call ProxmoxManager methods statically
-     * via the existing facades while still picking a connection:
+     * Entry point to explicitly select a connection name.
      *
-     * ProxmoxNode::on('site2')->getVMs('pve-node');
+     * Example:
+     *   $site1 = $manager->on('site1');
+     *   $vms = $site1->getVMs('pve-node');
      */
     public function on(string $name): Proxmox
     {
@@ -49,7 +50,7 @@ class ProxmoxManager
 
     protected function getDefaultConnection(): string
     {
-        return (string) $this->app['config']['proxmox.default'] ?? 'default';
+        return (string) ($this->app['config']['proxmox.default'] ?? 'default');
     }
 
     protected function resolveConnection(string $name): Proxmox
@@ -69,19 +70,10 @@ class ProxmoxManager
     {
         $config = $this->app['config']['proxmox'];
 
-        // Prefer the new `connections` array
-        if (isset($config['connections'][$name])) {
-            return $config['connections'][$name];
+        if (! isset($config['connections'][$name])) {
+            throw new \InvalidArgumentException("Proxmox connection [{$name}] is not defined.");
         }
 
-        // Fallback to old single-connection keys for backwards compatibility
-        return [
-            'hostname' => $config['hostname'] ?? 'proxmox.example.com',
-            'username' => $config['username'] ?? 'root',
-            'password' => $config['password'] ?? '',
-            'realm' => $config['realm'] ?? 'pam',
-            'port' => $config['port'] ?? 8006,
-            'node' => $config['node'] ?? '',
-        ];
+        return $config['connections'][$name];
     }
 }
