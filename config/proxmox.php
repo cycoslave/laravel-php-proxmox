@@ -3,29 +3,12 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Proxmox API Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Default single-connection configuration (backwards compatible)
-    |
-    */
-
-    'hostname' => env('PROXMOX_HOST', 'proxmox.example.com'),
-    'username' => env('PROXM OX_USER', 'root'),
-    'password' => env('PROXMOX_PASSWORD', ''),
-    'realm' => env('PROXMOX_REALM', 'pam'),
-    'port' => env('PROXMOX_PORT', 8006),
-    'node' => env('PROXMOX_NODE', ''),
-
-    /*
-    |--------------------------------------------------------------------------
     | Multiple Proxmox Connections
     |--------------------------------------------------------------------------
     |
-    | When you need to talk to more than one Proxmox endpoint (for example
-    | multi-tenant management or different sites), define them under
-    | "connections". The "default" key selects which one is used by the
-    | existing facades (ProxmoxNode, ProxmoxCluster, ProxmoxStorage, ...).
+    | This package is configured around named Proxmox connections.
+    | Define each reachable Proxmox endpoint under "connections", and
+    | set which one is the default using the "default" key.
     |
     | Example .env:
     |   PROXMOX_CONNECTION=site1
