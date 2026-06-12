@@ -1,15 +1,16 @@
 ![image](https://github.com/user-attachments/assets/2b73d27f-3278-4604-9573-0f6d8e77776f)
 
-## Proxmox API Integration PHP Package
+## Proxmox API Integration for Laravel Package
 
 [![License](https://poser.pugx.org/irabbi360/laravel-php-proxmox/license)](https://packagist.org/packages/irabbi360/laravel-php-proxmox)
 [![Latest Stable Version](https://poser.pugx.org/irabbi360/laravel-php-proxmox/version)](https://packagist.org/packages/irabbi360/laravel-php-proxmox)
 [![Total Downloads](https://poser.pugx.org/irabbi360/laravel-php-proxmox/downloads)](https://packagist.org/packages/irabbi360/laravel-php-proxmox)
 [![Daily Downloads](https://poser.pugx.org/irabbi360/laravel-php-proxmox/d/daily)](https://packagist.org/packages/irabbi360/laravel-php-proxmox)
 
-This PHP Laravel Proxmox library allows, to interact with your Proxmox server via API.
+This Laravel Proxmox library allows, to interact with multiple Proxmox server via API.
+It was based off https://github.com/irabbi360/laravel-php-proxmox
 
-> You find any errors, typos or you detect that something is not working as expected please open an [issue](https://github.com/irabbi360/laravel-php-proxmox/issues/new). I'll try to release a fix asap.
+> You find any errors, typos or you detect that something is not working as expected please open an [issue](https://github.com/cycoslave/laravel-proxmox/issues/new). I'll try to release a fix asap.
 
 ## Installation
 
@@ -41,6 +42,17 @@ To use the Proxmox functionality, you can call the respective facades in your co
 - For Storage-related operations, use the `ProxmoxStorage` facade.
 
 Make sure to import the corresponding facades into your controller before using them.
+
+// Default connection
+Proxmox::nodes()->all();
+
+// Named connection
+Proxmox::connection('datacenter2')->nodes()->get('pve1');
+
+// Fluent with named connection
+Proxmox::connection('backup-pve')
+    ->storage()
+    ->list('pve-node', 'dir');
 
 ```bash
 use Irabbi360\Proxmox\Facades\ProxmoxNodeVM;

@@ -1,21 +1,20 @@
 <?php
-
+// config/proxmox.php
 return [
-    /*
-    |--------------------------------------------------------------------------
-    | Proxmox API Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Configuration settings for connecting to your Proxmox server
-    |
-    */
+    'default' => env('PROXMOX_CONNECTION', 'primary'),
 
-    'hostname' => env('PROXMOX_HOST', 'proxmox.example.com'),
-    'username' => env('PROXMOX_USER', 'root'),
-    'password' => env('PROXMOX_PASSWORD', ''),
-    'realm' => env('PROXMOX_REALM', 'pam'),
-    'port' => env('PROXMOX_PORT', 8006),
-    'node' => env('PROXMOX_NODE', ''),
-
-//    'base_url' => env('PROXMOX_BASE_URL', 'https://<Proxmox_Server_IP>:8006'),
+    'connections' => [
+        'primary' => [
+            'host'     => env('PROXMOX_HOST', '127.0.0.1'),
+            'port'     => env('PROXMOX_PORT', 8006),
+            'username' => env('PROXMOX_USER', 'root'),
+            'realm'    => env('PROXMOX_REALM', 'pam'),         // pam | pve | ldap
+            'password' => env('PROXMOX_PASSWORD', null),       // null if using API token
+            'token_id' => env('PROXMOX_TOKEN_ID', null),       // USER@REALM!TOKENID
+            'token_secret' => env('PROXMOX_TOKEN_SECRET', null),
+            'verify_tls' => env('PROXMOX_VERIFY_TLS', true),
+            'timeout'  => env('PROXMOX_TIMEOUT', 10),
+        ],
+        // Additional connections follow the same structure
+    ],
 ];

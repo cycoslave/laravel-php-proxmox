@@ -1,17 +1,14 @@
 {
-    "name": "cycoslave/laravel-php-proxmox",
-    "description": "A PHP package for Proxmox API integration (multi-connection capable fork)",
+    "name": "cycoslave/laravel-proxmox",
+    "description": "A Proxmox API integration for Laravel (multi-connection capable fork)",
     "type": "library",
     "license": "MIT",
-    "homepage": "https://github.com/cycoslave/laravel-php-proxmox",
+    "homepage": "https://github.com/cycoslave/laravel-proxmox",
     "keywords": [
-        "Fazle Rabbi",
         "laravel",
         "laravel proxmox",
         "proxmox",
         "proxmox api",
-        "php proxmox api",
-        "laravel php proxmox api",
         "proxmox api client"
     ],
     "authors": [
@@ -28,17 +25,18 @@
     ],
     "autoload": {
         "psr-4": {
-            "Irabbi360\\Proxmox\\": "src/"
+            "Cycoslave\\Proxmox\\": "src/"
         }
     },
     "require": {
-        "php": "^7.4|^8.0",
-        "ext-curl": "*"
+        "php": "^8.1",
+        "ext-curl": "*",
+        "ext-json": "*"
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Irabbi360\\Proxmox\\ProxmoxServiceProvider"
+                "Cycoslave\\Proxmox\\ProxmoxServiceProvider"
             ],
             "aliases": {
                 "ProxmoxNodeVM": "ProxmoxNode",
