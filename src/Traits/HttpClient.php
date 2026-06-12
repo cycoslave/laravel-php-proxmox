@@ -2,24 +2,40 @@
 
 namespace Cycoslave\Proxmox\Traits;
 
+/**
+ * HttpClient trait — raw cURL dispatcher.
+ *
+ * Key change from original: sendRequest() now accepts explicit $headers[]
+ * so Authenticator can pass auth headers through on every call.
+ */
 trait HttpClient
 {
     /**
-     * Raw cURL dispatcher — used by Authenticator and makeRequest().
+     * Execute a cURL request and return the decoded JSON response.
      *
-     * @throws \Exception
+     * @param  string   $method   HTTP verb
+     * @param  string   $url      Full URL
+     * @param  array    $params   Body (POST/PUT) or query string (GET/DELETE)
+     * @param  string[] $headers  HTTP headers (auth headers from Authenticator)
+     * @return array    Decoded JSON response body
+     * @throws \Exception on cURL error or HTTP 4xx/5xx
      */
-    private function sendRequest(string $method, string $url, array $params = []): array
-    {
+    private function sendRequest(
+        string $method,
+        string $url,
+        array  $params  = [],
+        array  $headers = [],
+    ): array {
         $curl = curl_init();
 
         $options = [
-            CURLOPT_RETURNTRANSFER  => true,
-            CURLOPT_SSL_VERIFYPEER  => $this->verifyTls,
-            CURLOPT_SSL_VERIFYHOST  => $this->verifyTls ? 2 : 0,
-            CURLOPT_CONNECTTIMEOUT  => $this->timeout,
-            CURLOPT_TIMEOUT         => $this->timeout,
-            CURLOPT_CUSTOMREQUEST   => $method,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => $this->verifyTls,
+            CURLOPT_SSL_VERIFYHOST => $this->verifyTls ? 2 : 0,
+            CURLOPT_CONNECTTIMEOUT => $this->timeout,
+            CURLOPT_TIMEOUT        => $this->timeout,
+            CURLOPT_CUSTOMREQUEST  => $method,
+            CURLOPT_HTTPHEADER     => $headers,
         ];
 
         if ($method === 'POST' || $method === 'PUT') {
@@ -38,14 +54,20 @@ trait HttpClient
         $error    = curl_error($curl);
         curl_close($curl);
 
-        if ($response === false || $error) {
+        if ($response === false || $error !== '') {
             throw new \Exception("Proxmox cURL error: {$error}");
         }
 
         if ($httpCode >= 400) {
-            throw new \Exception("Proxmox API error {$httpCode}: {$url}");
+            throw new \Exception("Proxmox API HTTP {$httpCode} for: {$url}");
         }
 
-        return json_decode($response, true) ?? [];
+        $decoded = json_decode($response, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \Exception('Proxmox API returned invalid JSON: ' . json_last_error_msg());
+        }
+
+        return $decoded ?? [];
     }
 }

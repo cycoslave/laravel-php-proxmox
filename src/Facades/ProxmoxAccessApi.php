@@ -5,383 +5,350 @@ namespace Cycoslave\Proxmox;
 use Cycoslave\Proxmox\Helpers\ResponseHelper;
 
 /**
- * Wraps all /access/* Proxmox API endpoints.
- * Receives a ProxmoxAccess transport instance via constructor.
+ * ProxmoxAccessApi
+ *
+ * Wraps the Proxmox /access/* REST endpoints:
+ * domains, groups, roles, users, ACLs, tickets, and passwords.
+ *
+ * Renamed from ProxmoxAccess to eliminate the naming collision with the
+ * ProxmoxAccess HTTP connection layer (see ProxmoxAccess.php).
+ *
+ * Instantiated via ProxmoxManager::accessApi().
+ * Receives a ProxmoxAccess (HTTP layer) instance via constructor injection.
  */
 class ProxmoxAccessApi
 {
-    public function __construct(protected ProxmoxAccess $client) {}
+    public function __construct(
+        protected ProxmoxAccess $client
+    ) {}
+
+    // -------------------------------------------------------------------------
+    // Directory
+    // -------------------------------------------------------------------------
 
     /**
      * Directory index. Accessible by all authenticated users.
+     *
      * @throws \Exception
      */
     public function access(): array
     {
         $response = $this->client->get('access');
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access fail.');
         }
 
         return ResponseHelper::generate(true, 'Access List', $response['data']);
     }
 
-    /**
-     * Authentication domain index.
-     * @throws \Exception
-     */
+    // -------------------------------------------------------------------------
+    // Domains
+    // -------------------------------------------------------------------------
+
+    /** @throws \Exception */
     public function domains(): array
     {
         $response = $this->client->get('access/domains');
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access Domains fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access Domains fail.');
         }
 
         return ResponseHelper::generate(true, 'Access Domains List', $response['data']);
     }
 
-    /**
-     * Add an authentication server.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function addDomain(array $data): array
     {
         $response = $this->client->post('access/domains', $data);
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access add fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access add fail.');
         }
 
         return ResponseHelper::generate(true, 'Access add successfully', $response['data']);
     }
 
-    /**
-     * Get auth server configuration.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function domainsRealm(string $realm): array
     {
         $response = $this->client->get("access/domains/{$realm}");
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access Domain fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access Domain fail.');
         }
 
         return ResponseHelper::generate(true, 'Access Domain details', $response['data']);
     }
 
-    /**
-     * Update authentication server settings.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function updateDomain(string $realm, array $data): array
     {
         $response = $this->client->put("access/domains/{$realm}", $data);
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access domain update fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access domain update fail.');
         }
 
         return ResponseHelper::generate(true, 'Access domain update successfully', $response['data']);
     }
 
-    /**
-     * Delete an authentication server.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function deleteDomain(string $realm): array
     {
         $response = $this->client->delete("access/domains/{$realm}");
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access domain delete fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access domain delete fail.');
         }
 
         return ResponseHelper::generate(true, 'Access domain deleted successfully', $response['data']);
     }
 
-    /**
-     * Get groups list.
-     * @throws \Exception
-     */
+    // -------------------------------------------------------------------------
+    // Groups
+    // -------------------------------------------------------------------------
+
+    /** @throws \Exception */
     public function groups(): array
     {
         $response = $this->client->get('access/groups');
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access groups fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access groups fail.');
         }
 
         return ResponseHelper::generate(true, 'Access groups', $response['data']);
     }
 
-    /**
-     * Create new group.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function createGroup(array $data): array
     {
         $response = $this->client->post('access/groups', $data);
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access group create fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access group create fail.');
         }
 
         return ResponseHelper::generate(true, 'Access group created successfully', $response['data']);
     }
 
-    /**
-     * Get group configuration.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function groupId(string $groupid): array
     {
         $response = $this->client->get("access/groups/{$groupid}");
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access group fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access group fail.');
         }
 
         return ResponseHelper::generate(true, 'Access group details', $response['data']);
     }
 
-    /**
-     * Update group data.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function updateGroup(string $groupid, array $data): array
     {
         $response = $this->client->post("access/groups/{$groupid}", $data);
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access group update fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access group update fail.');
         }
 
         return ResponseHelper::generate(true, 'Access group updated successfully', $response['data']);
     }
 
-    /**
-     * Delete group.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function deleteGroup(string $groupid): array
     {
         $response = $this->client->delete("access/groups/{$groupid}");
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access group delete fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access group delete fail.');
         }
 
         return ResponseHelper::generate(true, 'Access group deleted successfully', $response['data']);
     }
 
-    /**
-     * Get roles.
-     * @throws \Exception
-     */
+    // -------------------------------------------------------------------------
+    // Roles
+    // -------------------------------------------------------------------------
+
+    /** @throws \Exception */
     public function roles(): array
     {
         $response = $this->client->get('access/roles');
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access roles fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access roles fail.');
         }
 
         return ResponseHelper::generate(true, 'Access roles', $response['data']);
     }
 
-    /**
-     * Create new role.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function createRole(array $data): array
     {
         $response = $this->client->post('access/roles', $data);
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access role create fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access role create fail.');
         }
 
         return ResponseHelper::generate(true, 'Access role created successfully', $response['data']);
     }
 
-    /**
-     * Get role configuration.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function roleId(string $roleid): array
     {
         $response = $this->client->get("access/roles/{$roleid}");
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access role fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access role fail.');
         }
 
         return ResponseHelper::generate(true, 'Access role details', $response['data']);
     }
 
-    /**
-     * Update an existing role.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function updateRole(string $roleid, array $data): array
     {
         $response = $this->client->put("access/roles/{$roleid}", $data);
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access role update fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access role update fail.');
         }
 
         return ResponseHelper::generate(true, 'Access role updated successfully', $response['data']);
     }
 
-    /**
-     * Delete role.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function deleteRole(string $roleid): array
     {
         $response = $this->client->delete("access/roles/{$roleid}");
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access role delete fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access role delete fail.');
         }
 
         return ResponseHelper::generate(true, 'Access role deleted successfully', $response['data']);
     }
 
-    /**
-     * Get users.
-     * @throws \Exception
-     */
+    // -------------------------------------------------------------------------
+    // Users
+    // -------------------------------------------------------------------------
+
+    /** @throws \Exception */
     public function users(): array
     {
         $response = $this->client->get('access/users');
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access users fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access users fail.');
         }
 
         return ResponseHelper::generate(true, 'Access users list', $response['data']);
     }
 
-    /**
-     * Create new user.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function createUser(array $data): array
     {
         $response = $this->client->post('access/users', $data);
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access user create fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access user create fail.');
         }
 
         return ResponseHelper::generate(true, 'Access user created successfully', $response['data']);
     }
 
-    /**
-     * Get user configuration.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function getUser(string $userid): array
     {
         $response = $this->client->get("access/users/{$userid}");
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access user fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access user fail.');
         }
 
         return ResponseHelper::generate(true, 'Access user details', $response['data']);
     }
 
-    /**
-     * Update user configuration.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function updateUser(string $userid, array $data): array
     {
         $response = $this->client->put("access/users/{$userid}", $data);
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access user update fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access user update fail.');
         }
 
         return ResponseHelper::generate(true, 'Access user updated successfully', $response['data']);
     }
 
-    /**
-     * Delete user.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function deleteUser(string $userid): array
     {
         $response = $this->client->delete("access/users/{$userid}");
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access user delete fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access user delete fail.');
         }
 
         return ResponseHelper::generate(true, 'Access user deleted successfully', $response['data']);
     }
 
-    /**
-     * Change user password.
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function changeUserPassword(array $data): array
     {
         $response = $this->client->put('access/password', $data);
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access user password update fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access user password update fail.');
         }
 
         return ResponseHelper::generate(true, 'Access user password updated successfully', $response['data']);
     }
 
-    /**
-     * Get Access Control List (ACLs).
-     * @throws \Exception
-     */
+    // -------------------------------------------------------------------------
+    // ACL
+    // -------------------------------------------------------------------------
+
+    /** @throws \Exception */
     public function acl(): array
     {
         $response = $this->client->get('access/acl');
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access user acl fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access user acl fail.');
         }
 
         return ResponseHelper::generate(true, 'Access user acl', $response['data']);
     }
 
-    /**
-     * Update Access Control List (add or remove permissions).
-     * @throws \Exception
-     */
+    /** @throws \Exception */
     public function updateAcl(array $data = []): array
     {
         $response = $this->client->put('access/acl', $data);
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access user acl update fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access user acl update fail.');
         }
 
         return ResponseHelper::generate(true, 'Access user acl updated successfully', $response['data']);
     }
 
-    /**
-     * Create or verify authentication ticket.
-     * @throws \Exception
-     */
+    // -------------------------------------------------------------------------
+    // Ticket
+    // -------------------------------------------------------------------------
+
+    /** @throws \Exception */
     public function createTicket(array $data): array
     {
         $response = $this->client->post('access/ticket', $data);
 
-        if (!isset($response['data'])) {
-            ResponseHelper::generate(false, 'Access user authentication fail.');
+        if (! isset($response['data'])) {
+            return ResponseHelper::generate(false, 'Access user authentication fail.');
         }
 
         return ResponseHelper::generate(true, 'Access user authentication successfully', $response['data']);

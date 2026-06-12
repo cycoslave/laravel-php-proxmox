@@ -6,95 +6,118 @@ use Cycoslave\Proxmox\Traits\Authenticator;
 use Cycoslave\Proxmox\Traits\HttpClient;
 
 /**
- * HTTP transport layer for a single named Proxmox connection.
- * Injected into ProxmoxNode, ProxmoxCluster, ProxmoxStorage, ProxmoxPools.
+ * ProxmoxAccess — HTTP connection layer.
+ *
+ * Responsibilities (per spec):
+ *   - Holds connection credentials and config
+ *   - Builds base URLs:  https://{host}:{port}/api2/json/{path}
+ *   - Exposes get / post / put / delete
+ *   - Returns decoded array or throws on error
+ *   - Delegates auth to Authenticator trait (ticket or API token)
+ *   - Delegates raw cURL to HttpClient trait
+ *
+ * Used by ProxmoxManager::resolve() and injected into all resource classes
+ * (ProxmoxNode, ProxmoxCluster, ProxmoxStorage, ProxmoxPools, ProxmoxAccessApi).
+ *
+ * NOT to be confused with ProxmoxAccessApi, which wraps the /access/* endpoints.
  */
 class ProxmoxAccess
 {
-    use HttpClient, Authenticator;
+    use Authenticator, HttpClient;
 
     public function __construct(
-        public readonly string  $host,
-        public readonly int     $port         = 8006,
-        public readonly string  $username     = 'root',
-        public readonly string  $realm        = 'pam',
-        public readonly ?string $password     = null,
-        public readonly ?string $tokenId      = null,
-        public readonly ?string $tokenSecret  = null,
-        public readonly bool    $verifyTls    = true,
-        public readonly int     $timeout      = 10,
-    ) {}
+        protected string  $host,
+        protected int     $port        = 8006,
+        protected string  $username    = 'root',
+        protected string  $realm       = 'pam',
+        protected ?string $password    = null,
+        protected ?string $tokenId     = null,
+        protected ?string $tokenSecret = null,
+        protected bool    $verifyTls   = true,
+        protected int     $timeout     = 10,
+    ) {
+        // TODO: inject a PSR-3 logger and replace trigger_error below
+        if (! $verifyTls) {
+            trigger_error(
+                "Proxmox: TLS verification disabled for host [{$host}]. Do not use in production.",
+                E_USER_WARNING
+            );
+        }
+    }
 
+    // -------------------------------------------------------------------------
+    // URL builder
+    // -------------------------------------------------------------------------
+
+    /**
+     * Base URL for all API calls.
+     */
     protected function baseUrl(): string
     {
         return "https://{$this->host}:{$this->port}/api2/json";
     }
 
+    // -------------------------------------------------------------------------
+    // Public HTTP interface
+    // -------------------------------------------------------------------------
+
     /**
+     * GET request.
+     *
+     * @param  string  $path    e.g. 'nodes' or 'nodes/pve1/qemu'
+     * @param  array   $params  Optional query parameters
+     * @return array   Decoded JSON response
      * @throws \Exception
      */
     public function get(string $path, array $params = []): array
     {
-        return $this->makeRequest('GET', $path, $params);
-    }
-
-    public function post(string $path, array $data = []): array
-    {
-        return $this->makeRequest('POST', $path, $data);
-    }
-
-    public function put(string $path, array $data = []): array
-    {
-        return $this->makeRequest('PUT', $path, $data);
-    }
-
-    public function delete(string $path, array $params = []): array
-    {
-        return $this->makeRequest('DELETE', $path, $params);
+        return $this->request('GET', $path, $params);
     }
 
     /**
-     * Internal — adds auth headers then dispatches via HttpClient::sendRequest().
+     * POST request.
      *
      * @throws \Exception
      */
-    private function makeRequest(string $method, string $path, array $params = []): array
+    public function post(string $path, array $data = []): array
+    {
+        return $this->request('POST', $path, $data);
+    }
+
+    /**
+     * PUT request.
+     *
+     * @throws \Exception
+     */
+    public function put(string $path, array $data = []): array
+    {
+        return $this->request('PUT', $path, $data);
+    }
+
+    /**
+     * DELETE request.
+     *
+     * @throws \Exception
+     */
+    public function delete(string $path, array $params = []): array
+    {
+        return $this->request('DELETE', $path, $params);
+    }
+
+    // -------------------------------------------------------------------------
+    // Internal dispatcher
+    // -------------------------------------------------------------------------
+
+    /**
+     * Build the full URL, attach auth headers, and dispatch via HttpClient.
+     *
+     * @throws \Exception
+     */
+    protected function request(string $method, string $path, array $payload = []): array
     {
         $url     = $this->baseUrl() . '/' . ltrim($path, '/');
-        $headers = $this->authHeaders(); // from Authenticator trait
+        $headers = $this->authHeaders();   // resolved by Authenticator trait
 
-        // Re-open curl with headers injected
-        $curl = curl_init();
-        $options = [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => $this->verifyTls,
-            CURLOPT_SSL_VERIFYHOST => $this->verifyTls ? 2 : 0,
-            CURLOPT_CONNECTTIMEOUT => $this->timeout,
-            CURLOPT_TIMEOUT        => $this->timeout,
-            CURLOPT_CUSTOMREQUEST  => $method,
-            CURLOPT_HTTPHEADER     => $headers,
-        ];
-
-        if ($method === 'POST' || $method === 'PUT') {
-            $options[CURLOPT_URL]        = $url;
-            $options[CURLOPT_POSTFIELDS] = http_build_query($params);
-        } else {
-            $options[CURLOPT_URL] = empty($params) ? $url : $url . '?' . http_build_query($params);
-        }
-
-        curl_setopt_array($curl, $options);
-        $response = curl_exec($curl);
-        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        $error    = curl_error($curl);
-        curl_close($curl);
-
-        if ($response === false || $error) {
-            throw new \Exception("Proxmox cURL error: {$error}");
-        }
-        if ($httpCode >= 400) {
-            throw new \Exception("Proxmox API error {$httpCode} on {$method} {$path}");
-        }
-
-        return json_decode($response, true) ?? [];
+        return $this->sendRequest($method, $url, $payload, $headers);
     }
 }
