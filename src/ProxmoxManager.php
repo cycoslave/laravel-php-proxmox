@@ -2,78 +2,90 @@
 
 namespace Cycoslave\Proxmox;
 
-use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Foundation\Application;
+use InvalidArgumentException;
 
 class ProxmoxManager
 {
-    /** @var Container */
-    protected $app;
+    protected Application $app;
 
-    /**
-     * Cached Proxmox client instances per connection name.
-     *
-     * @var array<string, Proxmox>
-     */
-    protected $clients = [];
+    /** @var array<string, ProxmoxAccess> */
+    protected array $connections = [];
 
-    public function __construct(Container $app)
+    public function __construct(Application $app)
     {
         $this->app = $app;
     }
 
     /**
-     * Get a Proxmox client for the given connection name.
-     * If no name is given, the configured default connection is used.
+     * Resolve a named ProxmoxAccess connection (lazy + cached).
      */
-    public function connection(?string $name = null): Proxmox
+    public function connection(?string $name = null): ProxmoxAccess
     {
-        $name = $name ?? $this->getDefaultConnection();
+        // Resolve 'default' → config('proxmox.default')
+        $name ??= $this->app['config']['proxmox.default']
+            ?? throw new InvalidArgumentException('No default Proxmox connection configured.');
 
-        if (! isset($this->clients[$name])) {
-            $this->clients[$name] = $this->resolveConnection($name);
+        if (! isset($this->connections[$name])) {
+            $this->connections[$name] = $this->resolve($name);
         }
 
-        return $this->clients[$name];
+        return $this->connections[$name];
     }
 
     /**
-     * Entry point to explicitly select a connection name.
-     *
-     * Example:
-     *   $site1 = $manager->on('site1');
-     *   $vms = $site1->getVMs('pve-node');
+     * Instantiate ProxmoxAccess from the multi-connection config schema.
      */
-    public function on(string $name): Proxmox
+    protected function resolve(string $name): ProxmoxAccess
     {
-        return $this->connection($name);
-    }
+        // ✅ Reads connections.{name}.* — NOT the old flat keys
+        $config = $this->app['config']["proxmox.connections.{$name}"]
+            ?? throw new InvalidArgumentException("Proxmox connection [{$name}] is not defined.");
 
-    protected function getDefaultConnection(): string
-    {
-        return (string) ($this->app['config']['proxmox.default'] ?? 'default');
-    }
-
-    protected function resolveConnection(string $name): Proxmox
-    {
-        $config = $this->getConnectionConfig($name);
-
-        return new ProxmoxNode(
-            $config['hostname'],
-            $config['username'],
-            $config['password'],
-            $config['realm'] ?? 'pam',
-            (int) ($config['port'] ?? 8006)
+        return new ProxmoxAccess(
+            host:        $config['host'],
+            port:        (int) ($config['port']        ?? 8006),
+            username:    $config['username'],
+            realm:       $config['realm']               ?? 'pam',
+            password:    $config['password']            ?? null,
+            tokenId:     $config['token_id']            ?? null,
+            tokenSecret: $config['token_secret']        ?? null,
+            verifyTls:   (bool) ($config['verify_tls'] ?? true),
+            timeout:     (int) ($config['timeout']      ?? 10),
         );
     }
 
-    protected function getConnectionConfig(string $name): array
+    /**
+     * Typed accessors used by the service provider singletons
+     */
+
+    public function node(?string $connection = null): ProxmoxNode
     {
-        $config = $this->app['config']['proxmox'];
+        return new ProxmoxNode($this->connection($connection));
+    }
 
-        if (! isset($config['connections'][$name])) {
-            throw new \InvalidArgumentException("Proxmox connection [{$name}] is not defined.");
+    public function cluster(?string $connection = null): ProxmoxCluster
+    {
+        return new ProxmoxCluster($this->connection($connection));
+    }
+
+    public function storage(?string $connection = null): ProxmoxStorage
+    {
+        return new ProxmoxStorage($this->connection($connection));
+    }
+
+    public function pools(?string $connection = null): ProxmoxPools
+    {
+        return new ProxmoxPools($this->connection($connection));
+    }
+
+    /** Flush a cached connection (useful in tests). */
+    public function purge(?string $name = null): void
+    {
+        if ($name === null) {
+            $this->connections = [];
+        } else {
+            unset($this->connections[$name]);
         }
-
-        return $config['connections'][$name];
     }
 }
