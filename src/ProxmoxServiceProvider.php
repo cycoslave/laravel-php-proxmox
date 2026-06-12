@@ -13,28 +13,47 @@ class ProxmoxServiceProvider extends ServiceProvider
             __DIR__.'/../config/proxmox.php', 'proxmox'
         );
 
-        // Register Proxmox services
-        $services = [
-            'proxmox-node' => ProxmoxNode::class,
-            'proxmox-cluster' => ProxmoxCluster::class,
-            'proxmox-storage' => ProxmoxStorage::class,
-            'proxmox-pools' => ProxmoxPools::class,
-            'proxmox-access' => ProxmoxAccess::class,
-        ];
+        // Register a manager that can handle multiple named Proxmox connections
+        $this->app->singleton(ProxmoxManager::class, function ($app) {
+            return new ProxmoxManager($app);
+        });
 
-        foreach ($services as $alias => $class) {
-            $this->app->singleton($alias, function ($app) use ($class) {
-                $config = $app['config']['proxmox'];
+        // Backwards-compatible bindings for existing facades.
+        // These will always resolve the default connection from the manager.
+        $this->app->singleton('proxmox-node', function ($app) {
+            /** @var ProxmoxManager $manager */
+            $manager = $app->make(ProxmoxManager::class);
 
-                return new $class(
-                    $config['hostname'],
-                    $config['username'],
-                    $config['password'],
-                    $config['realm'],
-                    $config['port']
-                );
-            });
-        }
+            return $manager->connection();
+        });
+
+        $this->app->singleton('proxmox-cluster', function ($app) {
+            /** @var ProxmoxManager $manager */
+            $manager = $app->make(ProxmoxManager::class);
+
+            return $manager->connection();
+        });
+
+        $this->app->singleton('proxmox-storage', function ($app) {
+            /** @var ProxmoxManager $manager */
+            $manager = $app->make(ProxmoxManager::class);
+
+            return $manager->connection();
+        });
+
+        $this->app->singleton('proxmox-pools', function ($app) {
+            /** @var ProxmoxManager $manager */
+            $manager = $app->make(ProxmoxManager::class);
+
+            return $manager->connection();
+        });
+
+        $this->app->singleton('proxmox-access', function ($app) {
+            /** @var ProxmoxManager $manager */
+            $manager = $app->make(ProxmoxManager::class);
+
+            return $manager->connection();
+        });
     }
 
     /**
