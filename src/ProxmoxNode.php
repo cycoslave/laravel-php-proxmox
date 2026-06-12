@@ -1,9 +1,9 @@
 <?php
 
-namespace Irabbi360\Proxmox;
+namespace Cycoslave\Proxmox;
 
 use Exception;
-use Irabbi360\Proxmox\Helpers\ResponseHelper;
+use Cycoslave\Proxmox\Helpers\ResponseHelper;
 
 class ProxmoxNode extends Proxmox
 {

@@ -1,5 +1,5 @@
 <?php
-namespace Irabbi360\Proxmox\Helpers;
+namespace Cycoslave\Proxmox\Helpers;
 
 class ResponseHelper
 {

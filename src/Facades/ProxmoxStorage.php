@@ -1,11 +1,11 @@
 <?php
 
-namespace Irabbi360\Proxmox\Facades;
+namespace Cycoslave\Proxmox\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Irabbi360\Proxmox\LaravelProxmox
+ * @see \Cycoslave\Proxmox\LaravelProxmox
  */
 class ProxmoxStorage extends Facade
 {

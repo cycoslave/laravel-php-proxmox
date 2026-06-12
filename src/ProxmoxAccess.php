@@ -1,8 +1,8 @@
 <?php
 
-namespace Irabbi360\Proxmox;
+namespace Cycoslave\Proxmox;
 
-use Irabbi360\Proxmox\Helpers\ResponseHelper;
+use Cycoslave\Proxmox\Helpers\ResponseHelper;
 
 class ProxmoxAccess extends Proxmox
 {

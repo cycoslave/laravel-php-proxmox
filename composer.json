@@ -13,11 +13,6 @@
     ],
     "authors": [
         {
-            "name": "Fazle Rabbi",
-            "email": "fazrabbi360@gmail.com",
-            "role": "Developer"
-        },
-        {
             "name": "Tony Roy",
             "email": "tonyroy@wcksoft.com",
             "role": "Maintainer (fork)"
@@ -40,8 +35,8 @@
             ],
             "aliases": {
                 "ProxmoxNodeVM": "ProxmoxNode",
-                "ProxmoxCluster": "Irabbi360\\Proxmox\\Facades\\ProxmoxCluster",
-                "ProxmoxStorage": "Irabbi360\\Proxmox\\Facades\\ProxmoxStorage"
+                "ProxmoxCluster": "Cycoslave\\Proxmox\\Facades\\ProxmoxCluster",
+                "ProxmoxStorage": "Cycoslave\\Proxmox\\Facades\\ProxmoxStorage"
             }
         }
     },

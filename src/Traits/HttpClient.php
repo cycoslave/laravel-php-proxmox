@@ -1,6 +1,6 @@
 <?php
 
-namespace Irabbi360\Proxmox\Traits;
+namespace Cycoslave\Proxmox\Traits;
 
 trait HttpClient
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Irabbi360\Proxmox;
+namespace Cycoslave\Proxmox;
 
 use Exception;
-use Irabbi360\Proxmox\Traits\Authenticator;
+use Cycoslave\Proxmox\Traits\Authenticator;
 
 class Proxmox
 {

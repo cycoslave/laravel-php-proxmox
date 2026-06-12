@@ -1,13 +1,13 @@
 <?php
 
-namespace Irabbi360\Proxmox\Facades;
+namespace Cycoslave\Proxmox\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \Irabbi360\Proxmox\Proxmox on(string $connection)
+ * @method static \Cycoslave\Proxmox\Proxmox on(string $connection)
  *
- * @see \Irabbi360\Proxmox\ProxmoxManager
+ * @see \Cycoslave\Proxmox\ProxmoxManager
  */
 class ProxmoxNode extends Facade
 {

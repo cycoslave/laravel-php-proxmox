@@ -1,6 +1,6 @@
 <?php
 
-namespace Irabbi360\Proxmox;
+namespace Cycoslave\Proxmox;
 
 use Illuminate\Support\ServiceProvider;
 
