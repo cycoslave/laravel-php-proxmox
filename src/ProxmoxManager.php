@@ -88,4 +88,9 @@ class ProxmoxManager
             unset($this->connections[$name]);
         }
     }
+
+    public function accessApi(?string $connection = null): ProxmoxAccessApi
+    {
+        return new ProxmoxAccessApi($this->connection($connection));
+    }
 }

@@ -4,27 +4,48 @@ namespace Cycoslave\Proxmox\Traits;
 
 trait HttpClient
 {
-    public function sendPostRequest(string $url, array $data): array
+    /**
+     * Raw cURL dispatcher — used by Authenticator and makeRequest().
+     *
+     * @throws \Exception
+     */
+    private function sendRequest(string $method, string $url, array $params = []): array
     {
         $curl = curl_init();
 
-        curl_setopt_array($curl, [
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => http_build_query($data),
-        ]);
+        $options = [
+            CURLOPT_RETURNTRANSFER  => true,
+            CURLOPT_SSL_VERIFYPEER  => $this->verifyTls,
+            CURLOPT_SSL_VERIFYHOST  => $this->verifyTls ? 2 : 0,
+            CURLOPT_CONNECTTIMEOUT  => $this->timeout,
+            CURLOPT_TIMEOUT         => $this->timeout,
+            CURLOPT_CUSTOMREQUEST   => $method,
+        ];
 
-        $response = curl_exec($curl);
-        $error = curl_error($curl);
-
-        curl_close($curl);
-
-        if ($error) {
-            throw new \Exception("Curl Error: $error");
+        if ($method === 'POST' || $method === 'PUT') {
+            $options[CURLOPT_URL]        = $url;
+            $options[CURLOPT_POSTFIELDS] = http_build_query($params);
+        } else {
+            $options[CURLOPT_URL] = empty($params)
+                ? $url
+                : $url . '?' . http_build_query($params);
         }
 
-        return json_decode($response, true);
+        curl_setopt_array($curl, $options);
+
+        $response = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $error    = curl_error($curl);
+        curl_close($curl);
+
+        if ($response === false || $error) {
+            throw new \Exception("Proxmox cURL error: {$error}");
+        }
+
+        if ($httpCode >= 400) {
+            throw new \Exception("Proxmox API error {$httpCode}: {$url}");
+        }
+
+        return json_decode($response, true) ?? [];
     }
 }

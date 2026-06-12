@@ -2,93 +2,74 @@
 
 namespace Cycoslave\Proxmox\Traits;
 
+use Illuminate\Support\Facades\Log;
+
 trait Authenticator
 {
-    use HttpClient;
-
-    private $hostname;
-    private $username;
-    private $password;
-    private $realm;
-    private $port;
-
-    public function __construct(string $hostname, string $username, string $password, string $realm = 'pam', int $port = 8006)
-    {
-        $this->hostname = $hostname;
-        $this->username = $username;
-        $this->password = $password;
-        $this->realm = $realm;
-        $this->port = $port;
-    }
+    private ?string $ticket = null;
+    private ?string $csrf   = null;
+    private ?int    $ticketExpiry = null;
 
     /**
+     * Perform ticket auth (POST /access/ticket).
+     * Populates $this->ticket, $this->csrf, $this->ticketExpiry.
+     *
      * @throws \Exception
      */
-    public function authenticate(): array
+    private function loginWithTicket(): void
     {
-        $url = "https://{$this->hostname}:{$this->port}/api2/json/access/ticket";
+        $url  = $this->baseUrl() . '/access/ticket';
         $data = [
             'username' => "{$this->username}@{$this->realm}",
             'password' => $this->password,
         ];
 
-        return $this->sendPostRequest($url, $data);
+        $response = $this->sendRequest('POST', $url, $data);
+
+        if (empty($response['data']['ticket'])) {
+            throw new \Exception('Proxmox ticket authentication failed.');
+        }
+
+        $this->ticket       = $response['data']['ticket'];
+        $this->csrf         = $response['data']['CSRFPreventionToken'];
+        $this->ticketExpiry = time() + 7200 - 60; // 2 h TTL, 60 s clock-skew buffer
     }
 
     /**
-     * Make API request to Proxmox
+     * Returns true when using API token auth (token_id + token_secret set).
+     */
+    private function usingTokenAuth(): bool
+    {
+        return ! empty($this->tokenId) && ! empty($this->tokenSecret);
+    }
+
+    /**
+     * Build auth headers for the current auth strategy.
+     * API token takes precedence over ticket auth.
      *
-     * @param string $method HTTP method (GET, POST, PUT, DELETE)
-     * @param string $endpoint API endpoint
-     * @param array $params Request parameters
-     * @return array
      * @throws \Exception
      */
-    public function makeRequest(string $method, string $endpoint, array $params = []): array
+    private function authHeaders(): array
     {
-        if (!$this->ticket) {
-            $this->login();
+        if ($this->usingTokenAuth()) {
+            return [
+                "Authorization: PVEAPIToken={$this->tokenId}={$this->tokenSecret}",
+            ];
         }
 
-        $curl = curl_init();
-        $url = "https://{$this->hostname}:{$this->port}/api2/json/{$endpoint}";
+        // Ticket auth — refresh if missing or expired
+        if ($this->ticket === null || time() >= ($this->ticketExpiry ?? 0)) {
+            if (! $this->verifyTls) {
+                Log::warning('Proxmox: TLS verification is disabled for connection.', [
+                    'host' => $this->host,
+                ]);
+            }
+            $this->loginWithTicket();
+        }
 
-        $headers = [
+        return [
             'Cookie: PVEAuthCookie=' . $this->ticket,
-            'CSRFPreventionToken: ' . $this->csrf
+            'CSRFPreventionToken: '  . $this->csrf,
         ];
-
-        $curlOptions = [
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_CUSTOMREQUEST => $method
-        ];
-
-        if ($method === 'POST' || $method === 'PUT') {
-            $curlOptions[CURLOPT_POSTFIELDS] = http_build_query($params);
-        } elseif (!empty($params)) {
-            $url .= '?' . http_build_query($params);
-            $curlOptions[CURLOPT_URL] = $url;
-        }
-
-        curl_setopt_array($curl, $curlOptions);
-
-        $response = curl_exec($curl);
-        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-
-        if ($response === false) {
-            throw new \Exception('cURL Error: ' . curl_error($curl));
-        }
-
-        curl_close($curl);
-
-        if ($httpCode >= 400) {
-            throw new \Exception("API request failed with status code: {$httpCode}");
-        }
-
-        return json_decode($response, true);
     }
 }
