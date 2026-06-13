@@ -59,7 +59,8 @@ trait HttpClient
         }
 
         if ($httpCode >= 400) {
-            throw new \Exception("Proxmox API HTTP {$httpCode} for: {$url}");
+            $safeUrl = strtok($url, '?');
+            throw new \Exception("Proxmox API HTTP {$httpCode} for: {$safeUrl}");
         }
 
         $decoded = json_decode($response, true);
