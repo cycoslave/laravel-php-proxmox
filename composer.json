@@ -33,7 +33,7 @@
             "providers": ["Cycoslave\\Proxmox\\ProxmoxServiceProvider"],
             "aliases": {
                 "Proxmox": "Cycoslave\\Proxmox\\Facades\\Proxmox",
-                "ProxmoxNodeVM": "ProxmoxNode",
+                "ProxmoxNodeVM": "Cycoslave\\Proxmox\\Facades\\ProxmoxNode",
                 "ProxmoxCluster": "Cycoslave\\Proxmox\\Facades\\ProxmoxCluster",
                 "ProxmoxStorage": "Cycoslave\\Proxmox\\Facades\\ProxmoxStorage"
             }
