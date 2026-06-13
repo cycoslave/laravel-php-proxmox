@@ -94,4 +94,19 @@ trait Authenticator
         $this->csrf         = $response['data']['CSRFPreventionToken'];
         $this->ticketExpiry = time() + 7200 - 60;
     }
+
+    /**
+     * Returns redacted ticket state for __debugInfo().
+     * Prevents live credentials from leaking into debug output.
+     *
+     * @return array<string, mixed>
+     */
+    public function redactedAuthState(): array
+    {
+        return [
+            'ticket'       => $this->ticket       !== null ? '[REDACTED]' : null,
+            'csrf'         => $this->csrf          !== null ? '[REDACTED]' : null,
+            'ticketExpiry' => $this->ticketExpiry,
+        ];
+    }
 }
