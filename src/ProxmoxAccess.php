@@ -2,6 +2,7 @@
 
 namespace Cycoslave\Proxmox;
 
+use Illuminate\Support\Facades\Log;
 use Cycoslave\Proxmox\Traits\Authenticator;
 use Cycoslave\Proxmox\Traits\HttpClient;
 
@@ -36,13 +37,9 @@ class ProxmoxAccess
         protected bool    $verifyTls   = true,
         protected int     $timeout     = 10,
     ) {
-        // TODO: inject a PSR-3 logger and replace trigger_error below
-        if (! $verifyTls) {
-            trigger_error(
-                "Proxmox: TLS verification disabled for host [{$host}]. Do not use in production.",
-                E_USER_WARNING
-            );
-        }
+        Log::warning('Proxmox: TLS verification disabled. Do not use in production.', [
+            'host' => $host,
+        ]);
     }
 
     // -------------------------------------------------------------------------

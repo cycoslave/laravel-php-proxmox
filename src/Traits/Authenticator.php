@@ -39,12 +39,6 @@ trait Authenticator
 
         // Ticket auth — refresh when missing or within 60 s of expiry
         if ($this->ticket === null || time() >= ($this->ticketExpiry ?? 0)) {
-            if (! $this->verifyTls) {
-                Log::warning('Proxmox: TLS verification is disabled.', [
-                    'host' => $this->host,
-                ]);
-            }
-
             $this->loginWithTicket();
         }
 
