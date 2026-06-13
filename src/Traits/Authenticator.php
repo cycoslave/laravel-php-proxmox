@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Log;
  * Auth strategy priority (per spec):
  *   1. API token  — if both tokenId and tokenSecret are set
  *   2. Ticket     — username + password, auto-refreshed on expiry
+ *
+ * Security: $ticket, $csrf, and $ticketExpiry are intentionally kept private.
+ * Do NOT expose these via __debugInfo(), logs, or exception reporters.
  */
 trait Authenticator
 {
@@ -60,7 +63,7 @@ trait Authenticator
         $url  = $this->baseUrl() . '/access/ticket';
         $data = [
             'username' => "{$this->username}@{$this->realm}",
-            'password' => $this->password,
+            'password' => $this->password,   // $this->password is redacted in __debugInfo()
         ];
 
         $response = $this->sendRequest('POST', $url, $data, []);
@@ -72,5 +75,18 @@ trait Authenticator
         $this->ticket       = $response['data']['ticket'];
         $this->csrf         = $response['data']['CSRFPreventionToken'];
         $this->ticketExpiry = time() + 7200 - 60; // 2 h TTL, 60 s clock-skew buffer
+    }
+
+    /**
+     * Returns redacted auth state for use in __debugInfo().
+     * Call this from the host class — traits cannot override __debugInfo() directly.
+     */
+    protected function redactedAuthState(): array
+    {
+        return [
+            'ticket'       => $this->ticket !== null ? '[REDACTED]' : null,
+            'csrf'         => $this->csrf   !== null ? '[REDACTED]' : null,
+            'ticketExpiry' => $this->ticketExpiry,   // expiry timestamp is safe
+        ];
     }
 }

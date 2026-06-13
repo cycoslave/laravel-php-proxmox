@@ -31,15 +31,43 @@ class ProxmoxAccess
         protected int     $port        = 8006,
         protected string  $username    = 'root',
         protected string  $realm       = 'pam',
-        protected ?string $password    = null,
-        protected ?string $tokenId     = null,
-        protected ?string $tokenSecret = null,
+        #[\SensitiveParameter] protected ?string $password    = null,
+        #[\SensitiveParameter] protected ?string $tokenId     = null,
+        #[\SensitiveParameter] protected ?string $tokenSecret = null,
         protected bool    $verifyTls   = true,
         protected int     $timeout     = 10,
     ) {
         Log::warning('Proxmox: TLS verification disabled. Do not use in production.', [
             'host' => $host,
         ]);
+    }
+
+    // -------------------------------------------------------------------------
+    // Debug protection
+    // -------------------------------------------------------------------------
+
+    /**
+     * Prevents credentials and live tickets from appearing in:
+     *   - var_dump() / print_r()
+     *   - Laravel Telescope / Sentry / Flare object captures
+     *   - dd() / dump()
+     *
+     * The Authenticator trait supplies redactedAuthState() for ticket fields.
+     */
+    public function __debugInfo(): array
+    {
+        return [
+            'host'      => $this->host,
+            'port'      => $this->port,
+            'username'  => $this->username,
+            'realm'     => $this->realm,
+            'verifyTls' => $this->verifyTls,
+            'timeout'   => $this->timeout,
+            'password'  => '[REDACTED]',
+            'tokenId'   => '[REDACTED]',
+            'tokenSecret' => '[REDACTED]',
+            ...$this->redactedAuthState(),   // ticket, csrf, ticketExpiry
+        ];
     }
 
     // -------------------------------------------------------------------------
