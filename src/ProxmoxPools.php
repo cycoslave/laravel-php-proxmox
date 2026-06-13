@@ -15,7 +15,7 @@ class ProxmoxPools
      * @throws \Cycoslave\Proxmox\Exceptions\ApiException
      * @throws \Cycoslave\Proxmox\Exceptions\ConnectionException
      */
-    public function pools()
+    public function pools(): array
     {
         $response = $this->client->get('pools');
 
@@ -31,7 +31,7 @@ class ProxmoxPools
      * @throws \Cycoslave\Proxmox\Exceptions\ApiException
      * @throws \Cycoslave\Proxmox\Exceptions\ConnectionException
      */
-    public function poolsId($poolid)
+    public function poolsId(string $poolid): array
     {
         $response = $this->client->get("pools/$poolid");
 
@@ -48,7 +48,7 @@ class ProxmoxPools
      * @throws \Cycoslave\Proxmox\Exceptions\ApiException
      * @throws \Cycoslave\Proxmox\Exceptions\ConnectionException
      */
-    public function putPool($poolid, $data = array())
+    public function putPool(string $poolid, array $data = []): array
     {
         $response = $this->client->put("pools/{$poolid}", $data);
 
