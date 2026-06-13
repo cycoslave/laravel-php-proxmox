@@ -2,7 +2,7 @@
 
 namespace Cycoslave\Proxmox;
 
-use Cycoslave\Proxmox\Helpers\ResponseHelper;
+use Cycoslave\Proxmox\Support\ResponseHelper;
 use Cycoslave\Proxmox\Traits\ValidatesPathSegments;
 
 class ProxmoxStorage

@@ -3,7 +3,7 @@
 namespace Cycoslave\Proxmox;
 
 use Exception;
-use Cycoslave\Proxmox\Helpers\ResponseHelper;
+use Cycoslave\Proxmox\Support\ResponseHelper;
 use Cycoslave\Proxmox\Traits\ValidatesPathSegments;
 
 class ProxmoxNode

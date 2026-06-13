@@ -2,23 +2,29 @@
 
 namespace Cycoslave\Proxmox\Traits;
 
+use Cycoslave\Proxmox\Exceptions\ApiException;
+use Cycoslave\Proxmox\Exceptions\ConnectionException;
+
 /**
  * HttpClient trait — raw cURL dispatcher.
  *
- * Key change from original: sendRequest() now accepts explicit $headers[]
- * so Authenticator can pass auth headers through on every call.
+ * Throws typed exceptions so callers can distinguish error categories:
+ *   - ConnectionException  : cURL / network-level failure
+ *   - ApiException         : HTTP 4xx / 5xx or malformed JSON from Proxmox
  */
 trait HttpClient
 {
     /**
      * Execute a cURL request and return the decoded JSON response.
      *
-     * @param  string   $method   HTTP verb
-     * @param  string   $url      Full URL
-     * @param  array    $params   Body (POST/PUT) or query string (GET/DELETE)
-     * @param  string[] $headers  HTTP headers (auth headers from Authenticator)
+     * @param  string   $method   HTTP verb (GET, POST, PUT, DELETE)
+     * @param  string   $url      Fully-qualified URL
+     * @param  array    $params   Body params (POST/PUT) or query params (GET/DELETE)
+     * @param  string[] $headers  Auth headers resolved by Authenticator
      * @return array    Decoded JSON response body
-     * @throws \Exception on cURL error or HTTP 4xx/5xx
+     *
+     * @throws ConnectionException  On cURL / network failure or timeout
+     * @throws ApiException         On HTTP 4xx/5xx or invalid JSON
      */
     private function sendRequest(
         string $method,
@@ -32,7 +38,7 @@ trait HttpClient
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => $this->verifyTls,
             CURLOPT_SSL_VERIFYHOST => $this->verifyTls ? 2 : 0,
-            CURLOPT_CONNECTTIMEOUT => $this->timeout,
+            CURLOPT_CONNECTTIMEOUT => min(5, $this->timeout),
             CURLOPT_TIMEOUT        => $this->timeout,
             CURLOPT_CUSTOMREQUEST  => $method,
             CURLOPT_HTTPHEADER     => $headers,
@@ -55,18 +61,24 @@ trait HttpClient
         curl_close($curl);
 
         if ($response === false || $error !== '') {
-            throw new \Exception("Proxmox cURL error: {$error}");
+            throw new ConnectionException("Proxmox cURL error: {$error}");
         }
 
         if ($httpCode >= 400) {
+            // Redact query string from logged URL (MED-2 fix)
             $safeUrl = strtok($url, '?');
-            throw new \Exception("Proxmox API HTTP {$httpCode} for: {$safeUrl}");
+            throw new ApiException(
+                "Proxmox API HTTP {$httpCode} for: {$safeUrl}",
+                $httpCode,
+            );
         }
 
         $decoded = json_decode($response, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception('Proxmox API returned invalid JSON: ' . json_last_error_msg());
+            throw new ApiException(
+                'Proxmox API returned invalid JSON: ' . json_last_error_msg(),
+            );
         }
 
         return $decoded ?? [];

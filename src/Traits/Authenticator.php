@@ -2,17 +2,15 @@
 
 namespace Cycoslave\Proxmox\Traits;
 
+use Cycoslave\Proxmox\Exceptions\AuthenticationException;
 use Illuminate\Support\Facades\Log;
 
 /**
  * Authenticator trait — ticket and API token auth for Proxmox.
  *
- * Auth strategy priority (per spec):
+ * Auth strategy priority:
  *   1. API token  — if both tokenId and tokenSecret are set
  *   2. Ticket     — username + password, auto-refreshed on expiry
- *
- * Security: $ticket, $csrf, and $ticketExpiry are intentionally kept private.
- * Do NOT expose these via __debugInfo(), logs, or exception reporters.
  */
 trait Authenticator
 {
@@ -30,7 +28,7 @@ trait Authenticator
      * API token takes precedence over ticket auth.
      *
      * @return string[]
-     * @throws \Exception
+     * @throws AuthenticationException
      */
     private function authHeaders(): array
     {
@@ -40,7 +38,6 @@ trait Authenticator
             ];
         }
 
-        // Ticket auth — refresh when missing or within 60 s of expiry
         if ($this->ticket === null || time() >= ($this->ticketExpiry ?? 0)) {
             $this->loginWithTicket();
         }
@@ -53,40 +50,36 @@ trait Authenticator
 
     /**
      * Perform ticket auth (POST /access/ticket).
-     * Calls sendRequest() with empty headers directly — bypasses authHeaders()
-     * to prevent infinite recursion (login call is itself unauthenticated).
+     * Calls sendRequest() with empty headers — bypasses authHeaders()
+     * to prevent infinite recursion.
      *
-     * @throws \Exception
+     * @throws AuthenticationException
      */
     private function loginWithTicket(): void
     {
         $url  = $this->baseUrl() . '/access/ticket';
         $data = [
             'username' => "{$this->username}@{$this->realm}",
-            'password' => $this->password,   // $this->password is redacted in __debugInfo()
+            'password' => $this->password,
         ];
 
-        $response = $this->sendRequest('POST', $url, $data, []);
+        try {
+            $response = $this->sendRequest('POST', $url, $data, []);
+        } catch (\Throwable $e) {
+            throw new AuthenticationException(
+                "Proxmox ticket authentication failed: {$e->getMessage()}",
+                previous: $e,
+            );
+        }
 
         if (empty($response['data']['ticket'])) {
-            throw new \Exception('Proxmox ticket authentication failed.');
+            throw new AuthenticationException(
+                'Proxmox ticket authentication failed: no ticket in response.'
+            );
         }
 
         $this->ticket       = $response['data']['ticket'];
         $this->csrf         = $response['data']['CSRFPreventionToken'];
-        $this->ticketExpiry = time() + 7200 - 60; // 2 h TTL, 60 s clock-skew buffer
-    }
-
-    /**
-     * Returns redacted auth state for use in __debugInfo().
-     * Call this from the host class — traits cannot override __debugInfo() directly.
-     */
-    protected function redactedAuthState(): array
-    {
-        return [
-            'ticket'       => $this->ticket !== null ? '[REDACTED]' : null,
-            'csrf'         => $this->csrf   !== null ? '[REDACTED]' : null,
-            'ticketExpiry' => $this->ticketExpiry,   // expiry timestamp is safe
-        ];
+        $this->ticketExpiry = time() + 7200 - 60;
     }
 }
