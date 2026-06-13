@@ -4,9 +4,12 @@ namespace Cycoslave\Proxmox;
 
 use Exception;
 use Cycoslave\Proxmox\Helpers\ResponseHelper;
+use Cycoslave\Proxmox\Traits\ValidatesPathSegments;
 
 class ProxmoxNode
 {
+    use ValidatesPathSegments;
+
     public function __construct(protected ProxmoxAccess $client) {}
 
     /**
@@ -48,6 +51,7 @@ class ProxmoxNode
      */
     public function apt(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/apt");
 
         if (!isset($response['data'])) {
@@ -66,6 +70,7 @@ class ProxmoxNode
      */
     public function updateApt(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/apt/update", $data);
 
         if (!isset($response['data'])) {
@@ -84,6 +89,7 @@ class ProxmoxNode
     public function aptChangelog(string $node, string $name = null)
     {
         $optional['name'] = !empty($name) ? $name : null;
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/apt/changelog", $optional);
 
         if (!isset($response['data'])) {
@@ -100,6 +106,7 @@ class ProxmoxNode
      */
     public function aptUpdate(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/apt/update");
 
         if (!isset($response['data'])) {
@@ -119,6 +126,7 @@ class ProxmoxNode
      */
     public function createAptUpdate(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/apt/update", $data);
 
         if (!isset($response['data'])) {
@@ -136,6 +144,7 @@ class ProxmoxNode
      */
     public function ceph(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/ceph");
 
         if (!isset($response['data'])) {
@@ -153,6 +162,7 @@ class ProxmoxNode
      */
     public function cephFlags(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/ceph/flags");
 
         if (!isset($response['data'])) {
@@ -173,6 +183,7 @@ class ProxmoxNode
      */
     public function setCephFlags(string $node, $flag, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/ceph/flags/$flag", $data);
 
         if (!isset($response['data'])) {
@@ -191,6 +202,8 @@ class ProxmoxNode
      */
     public function unsetCephFlags(string $node, $flag)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment((string) $flag, 'flag');
         $response = $this->makeRequest("DELETE", "nodes/$node/ceph/flags/$flag");
 
         if (!isset($response['data'])) {
@@ -210,6 +223,7 @@ class ProxmoxNode
      */
     public function createCephMgr(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/ceph/mgr", $data);
 
         if (!isset($response['data'])) {
@@ -228,6 +242,8 @@ class ProxmoxNode
      */
     public function destroyCephMgr(string $node, string $id)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($id, 'id');
         $response = $this->makeRequest("DELETE", "nodes/$node/ceph/mgr/$id");
 
         if (!isset($response['data'])) {
@@ -245,6 +261,7 @@ class ProxmoxNode
      */
     public function cephMon(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/ceph/mon");
 
         if (!isset($response['data'])) {
@@ -264,6 +281,7 @@ class ProxmoxNode
      */
     public function createCephMon(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/ceph/mon", $data);
 
         if (!isset($response['data'])) {
@@ -282,6 +300,8 @@ class ProxmoxNode
      */
     public function destroyCephMon(string $node, string $monid)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($monid, 'monid');
         $response = $this->makeRequest("DELETE", "nodes/$node/ceph/mgr/$monid");
 
         if (!isset($response['data'])) {
@@ -299,6 +319,7 @@ class ProxmoxNode
      */
     public function cephOsd(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/ceph/osd");
 
         if (!isset($response['data'])) {
@@ -318,6 +339,7 @@ class ProxmoxNode
      */
     public function createCephOsd(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/ceph/osd", $data);
 
         if (!isset($response['data'])) {
@@ -336,6 +358,8 @@ class ProxmoxNode
      */
     public function destroyCephOsd($node, $osdid)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($osdid, 'osdid');
         $response = $this->makeRequest("DELETE", "nodes/$node/ceph/osd/$osdid");
 
         if (!isset($response['data'])) {
@@ -355,6 +379,8 @@ class ProxmoxNode
      */
     public function cephOsdIn(string $node, string $osdid, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($osdid, 'osdid');
         $response = $this->makeRequest("POST", "nodes/$node/ceph/osd/$osdid/in", $data);
 
         if (!isset($response['data'])) {
@@ -374,6 +400,8 @@ class ProxmoxNode
      */
     public function cephOsdOut($node, $osdid, $data = array())
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($osdid, 'osdid');
         $response = $this->makeRequest("POST", "nodes/$node/ceph/osd/$osdid/out", $data);
 
         if (!isset($response['data'])) {
@@ -391,6 +419,7 @@ class ProxmoxNode
      */
     public function getCephPools(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/ceph/pools");
 
         if (!isset($response['data'])) {
@@ -410,6 +439,7 @@ class ProxmoxNode
      */
     public function createCephPool(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/ceph/pools", $data);
 
         if (!isset($response['data'])) {
@@ -427,6 +457,7 @@ class ProxmoxNode
      */
     public function destroyCephPool(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("DELETE", "nodes/$node/ceph/pools");
 
         if (!isset($response['data'])) {
@@ -444,6 +475,7 @@ class ProxmoxNode
      */
     public function cephConfig(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/ceph/config");
 
         if (!isset($response['data'])) {
@@ -461,6 +493,7 @@ class ProxmoxNode
      */
     public function cephCrush(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/ceph/crush");
 
         if (!isset($response['data'])) {
@@ -478,6 +511,7 @@ class ProxmoxNode
      */
     public function cephDisks(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/ceph/disks");
 
         if (!isset($response['data'])) {
@@ -497,6 +531,7 @@ class ProxmoxNode
      */
     public function createCephInit(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/ceph/init", $data);
 
         if (!isset($response['data'])) {
@@ -519,6 +554,7 @@ class ProxmoxNode
         $optional['limit'] = !empty($limit) ? $limit : 50;
         $optional['start'] = !empty($start) ? $start : 0;
 
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/ceph/log", $optional);
 
         if (!isset($response['data'])) {
@@ -536,6 +572,7 @@ class ProxmoxNode
      */
     public function cephRules(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/ceph/rules");
 
         if (!isset($response['data'])) {
@@ -555,6 +592,7 @@ class ProxmoxNode
      */
     public function cephStart(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/ceph/start", $data);
 
         if (!isset($response['data'])) {
@@ -574,6 +612,7 @@ class ProxmoxNode
      */
     public function cephStop(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/ceph/stop", $data);
 
         if (!isset($response['data'])) {
@@ -591,6 +630,7 @@ class ProxmoxNode
      */
     public function cephStatus(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/ceph/status");
 
         if (!isset($response['data'])) {
@@ -608,6 +648,7 @@ class ProxmoxNode
      */
     public function getDisks(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/disks");
 
         if (!isset($response['data'])) {
@@ -627,6 +668,7 @@ class ProxmoxNode
      */
     public function disk(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/disks", $data);
 
         if (!isset($response['data'])) {
@@ -644,6 +686,7 @@ class ProxmoxNode
      */
     public function disksList(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/disks/list");
 
         if (!isset($response['data'])) {
@@ -664,6 +707,7 @@ class ProxmoxNode
     {
         $optional['disk'] = !empty($disk) ? $disk : null;
 
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/disks/smart", $optional);
 
         if (!isset($response['data'])) {
@@ -681,6 +725,7 @@ class ProxmoxNode
      */
     public function firewall(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/firewall");
 
         if (!isset($response['data'])) {
@@ -698,6 +743,7 @@ class ProxmoxNode
      */
     public function firewallRules(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/firewall/rules");
 
         if (!isset($response['data'])) {
@@ -716,6 +762,7 @@ class ProxmoxNode
      */
     public function createFirewallRule($node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/firewall/rules", $data);
 
         if (!isset($response['data'])) {
@@ -734,6 +781,7 @@ class ProxmoxNode
      */
     public function firewallRulesPos(string $node, int $pos)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/firewall/rules/$pos");
 
         if (!isset($response['data'])) {
@@ -753,6 +801,7 @@ class ProxmoxNode
      */
     public function setFirewallRulePos(string $node, int $pos, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("PUT", "nodes/$node/firewall/rules/$pos", $data);
 
         if (!isset($response['data'])) {
@@ -771,6 +820,7 @@ class ProxmoxNode
      */
     public function deleteFirewallRulePos(string $node, int $pos)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("DELETE", "nodes/$node/firewall/rules/$pos");
 
         if (!isset($response['data'])) {
@@ -788,6 +838,7 @@ class ProxmoxNode
      */
     public function firewallRulesLog(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/firewall/rules/log");
 
         if (!isset($response['data'])) {
@@ -805,6 +856,7 @@ class ProxmoxNode
      */
     public function firewallRulesOptions(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/firewall/rules/options");
 
         if (!isset($response['data'])) {
@@ -840,6 +892,7 @@ class ProxmoxNode
      */
     public function createQemuFirewallRule(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/rules", $data);
 
         if (!isset($response['data'])) {
@@ -855,6 +908,7 @@ class ProxmoxNode
      */
     public function listQemuFirewallRule(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/rules");
 
         if (!isset($response['data'])) {
@@ -871,6 +925,7 @@ class ProxmoxNode
      */
     public function removeQemuFirewallRule(string $node, int $vmid, $pos)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->delete("nodes/$node/qemu/$vmid/firewall/rules/$pos");
 
         if (!isset($response['data'])) {
@@ -887,6 +942,7 @@ class ProxmoxNode
      */
     public function lxc(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc");
 
         if (!isset($response['data'])) {
@@ -905,6 +961,7 @@ class ProxmoxNode
      */
     public function createLxc(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/lxc", $data);
 
         if (!isset($response['data'])) {
@@ -923,6 +980,7 @@ class ProxmoxNode
      */
     public function lxcVmid(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid");
 
         if (!isset($response['data'])) {
@@ -941,6 +999,7 @@ class ProxmoxNode
      */
     public function deleteLxc($node, $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("DELETE", "nodes/$node/lxc/$vmid");
 
         if (!isset($response['data'])) {
@@ -959,6 +1018,7 @@ class ProxmoxNode
      */
     public function lxcFirewall(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/firewall");
 
         if (!isset($response['data'])) {
@@ -977,6 +1037,7 @@ class ProxmoxNode
      */
     public function lxcFirewallAliases(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/firewall/aliases");
 
         if (!isset($response['data'])) {
@@ -997,6 +1058,7 @@ class ProxmoxNode
      */
     public function createLxcFirewallAliase(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/lxc/$vmid/firewall/aliases", $data);
 
         if (!isset($response['data'])) {
@@ -1016,6 +1078,8 @@ class ProxmoxNode
      */
     public function lxcFirewallAliasesName(string $node, int $vmid, string $name)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/firewall/aliases/$name");
 
         if (!isset($response['data'])) {
@@ -1036,6 +1100,8 @@ class ProxmoxNode
      */
     public function updateLxcFirewallAliaseName(string $node, int $vmid, string $name, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
         $response = $this->makeRequest("PUT", "nodes/$node/lxc/$vmid/firewall/aliases/$name", $data);
 
         if (!isset($response['data'])) {
@@ -1055,6 +1121,8 @@ class ProxmoxNode
      */
     public function deleteLxcFirewallAliaseName(string $node, int $vmid, string $name)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
         $response = $this->makeRequest("DELETE", "nodes/$node/lxc/$vmid/firewall/aliases/$name");
 
         if (!isset($response['data'])) {
@@ -1073,6 +1141,7 @@ class ProxmoxNode
      */
     public function lxcFirewallIpset(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/firewall/ipset");
 
         if (!isset($response['data'])) {
@@ -1092,6 +1161,7 @@ class ProxmoxNode
      */
     public function createLxcFirewallIpset(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/lxc/$vmid/firewall/ipset", $data);
 
         if (!isset($response['data'])) {
@@ -1111,6 +1181,8 @@ class ProxmoxNode
      */
     public function lxcFirewallIpsetName(string $node, int $vmid, string $name)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/firewall/ipset/$name");
 
         if (!isset($response['data'])) {
@@ -1131,6 +1203,8 @@ class ProxmoxNode
      */
     public function addLxcFirewallIpsetName(string $node, int $vmid, string $name, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
         $response = $this->makeRequest("POST", "nodes/$node/lxc/$vmid/firewall/ipset/$name", $data);
 
         if (!isset($response['data'])) {
@@ -1150,6 +1224,8 @@ class ProxmoxNode
      */
     public function deleteLxcFirewallIpsetName(string $node, int $vmid, string $name)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
         $response = $this->makeRequest("DELETE", "/nodes/$node/lxc/$vmid/firewall/ipset/$name");
 
         if (!isset($response['data'])) {
@@ -1170,6 +1246,9 @@ class ProxmoxNode
      */
     public function lxcFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
+        $this->validateSegment($cidr, 'cidr');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/firewall/ipset/$name/$cidr");
 
         if (!isset($response['data'])) {
@@ -1191,6 +1270,9 @@ class ProxmoxNode
      */
     public function updateLxcFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
+        $this->validateSegment($cidr, 'cidr');
         $response = $this->makeRequest("PUT", "nodes/$node/lxc/$vmid/firewall/ipset/$name/$cidr", $data);
 
         if (!isset($response['data'])) {
@@ -1211,6 +1293,9 @@ class ProxmoxNode
      */
     public function deleteLxcFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
+        $this->validateSegment($cidr, 'cidr');
         $response = $this->makeRequest("DELETE", "nodes/$node/lxc/$vmid/firewall/ipset/$name/$cidr");
 
         if (!isset($response['data'])) {
@@ -1229,6 +1314,7 @@ class ProxmoxNode
      */
     public function lxcFirewallRules(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/firewall/rules");
 
         if (!isset($response['data'])) {
@@ -1248,6 +1334,7 @@ class ProxmoxNode
      */
     public function createLxcFirewallRules(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "/nodes/$node/lxc/$vmid/firewall/rules", $data);
 
         if (!isset($response['data'])) {
@@ -1266,6 +1353,7 @@ class ProxmoxNode
      */
     public function lxcFirewallRulesPos(string $node, int $vmid, $pos)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "/nodes/$node/lxc/$vmid/firewall/rules/$pos");
 
         if (!isset($response['data'])) {
@@ -1285,6 +1373,7 @@ class ProxmoxNode
      */
     public function setLxcFirewallRulesPos(string $node, int $vmid, $pos, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("PUT", "nodes/$node/lxc/$vmid/firewall/rules/$pos", $data);
 
         if (!isset($response['data'])) {
@@ -1303,6 +1392,7 @@ class ProxmoxNode
      */
     public function deleteLxcFirewallRulesPos(string $node, int $vmid, $pos)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("DELETE", "/nodes/$node/lxc/$vmid/firewall/rules/$pos");
 
         if (!isset($response['data'])) {
@@ -1326,6 +1416,7 @@ class ProxmoxNode
         $optional['limit'] = !empty($limit) ? $limit : 50;
         $optional['start'] = !empty($start) ? $start : 0;
 
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/firewall/log", $optional);
 
         if (!isset($response['data'])) {
@@ -1344,6 +1435,7 @@ class ProxmoxNode
      */
     public function lxcFirewallOptions(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/firewall/options");
 
         if (!isset($response['data'])) {
@@ -1363,6 +1455,7 @@ class ProxmoxNode
      */
     public function setLxcFirewallOptions($node, $vmid, $data = array())
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("PUT", "/nodes/$node/lxc/$vmid/firewall/options", $data);
 
         if (!isset($response['data'])) {
@@ -1381,6 +1474,7 @@ class ProxmoxNode
      */
     public function lxcSnapshot(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/snapshot");
 
         if (!isset($response['data'])) {
@@ -1400,6 +1494,7 @@ class ProxmoxNode
      */
     public function createLxcSnapshot(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/lxc/$vmid/snapshot", $data);
 
         if (!isset($response['data'])) {
@@ -1419,6 +1514,8 @@ class ProxmoxNode
      */
     public function lxcSnapname(string $node, int $vmid, string $snapname)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($snapname, 'snapname');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/snapshot/$snapname");
 
         if (!isset($response['data'])) {
@@ -1438,6 +1535,8 @@ class ProxmoxNode
      */
     public function deleteLxcSnapshot(string $node, int $vmid, string $snapname)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($snapname, 'snapname');
         $response = $this->makeRequest("DELETE", "nodes/$node/lxc/$vmid/snapshot/$snapname");
 
         if (!isset($response['data'])) {
@@ -1457,6 +1556,8 @@ class ProxmoxNode
      */
     public function lxcSnapnameConfig(string $node, int $vmid, string $snapname)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($snapname, 'snapname');
         $response = $this->makeRequest("GET", "/nodes/$node/lxc/$vmid/snapshot/$snapname/config");
 
         if (!isset($response['data'])) {
@@ -1477,6 +1578,8 @@ class ProxmoxNode
      */
     public function lxcSnapshotConfig(string $node, int $vmid, string $snapname, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($snapname, 'snapname');
         $response = $this->makeRequest("PUT", "/nodes/$node/lxc/$vmid/snapshot/$snapname/config", $data);
 
         if (!isset($response['data'])) {
@@ -1497,6 +1600,8 @@ class ProxmoxNode
      */
     public function lxcSnapshotRollback(string $node, int $vmid, string $snapname, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($snapname, 'snapname');
         $response = $this->makeRequest("POST", "nodes/$node/lxc/$vmid/snapshot/$snapname/rollback", $data);
 
         if (!isset($response['data'])) {
@@ -1515,6 +1620,7 @@ class ProxmoxNode
      */
     public function lxcStatus(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/status");
 
         if (!isset($response['data'])) {
@@ -1533,6 +1639,7 @@ class ProxmoxNode
      */
     public function lxcCurrent(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/status/current");
 
         if (!isset($response['data'])) {
@@ -1552,6 +1659,7 @@ class ProxmoxNode
      */
     public function lxcResume(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/lxc/$vmid/status/resume", $data);
 
         if (!isset($response['data'])) {
@@ -1571,6 +1679,7 @@ class ProxmoxNode
      */
     public function lxcShutdown(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "/nodes/$node/lxc/$vmid/status/shutdown", $data);
 
         if (!isset($response['data'])) {
@@ -1590,6 +1699,7 @@ class ProxmoxNode
      */
     public function lxcStart(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/lxc/$vmid/status/start", $data);
 
         if (!isset($response['data'])) {
@@ -1609,6 +1719,7 @@ class ProxmoxNode
      */
     public function lxcStop(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/lxc/$vmid/status/stop", $data);
 
         if (!isset($response['data'])) {
@@ -1625,8 +1736,9 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @param array $data
      */
-    public function lxcSuspend($node, $vmid, $data = array())
+    public function lxcSuspend(string $node, int $vmid, $data = array())
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/lxc/$vmid/status/suspend", $data);
 
         if (!isset($response['data'])) {
@@ -1646,6 +1758,7 @@ class ProxmoxNode
      */
     public function lxcReboot(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/lxc/$vmid/status/reboot", $data);
 
         if (!isset($response['data'])) {
@@ -1665,6 +1778,7 @@ class ProxmoxNode
      */
     public function lxcClone(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "/nodes/$node/lxc/$vmid/clone", $data);
 
         if (!isset($response['data'])) {
@@ -1683,6 +1797,7 @@ class ProxmoxNode
      */
     public function lxcConfig(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/config");
 
         if (!isset($response['data'])) {
@@ -1702,6 +1817,7 @@ class ProxmoxNode
      */
     public function setLxcConfig(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("PUT", "nodes/$node/lxc/$vmid/config", $data);
 
         if (!isset($response['data'])) {
@@ -1720,6 +1836,7 @@ class ProxmoxNode
      */
     public function lxcFeature(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/feature");
 
         if (!isset($response['data'])) {
@@ -1739,6 +1856,7 @@ class ProxmoxNode
      */
     public function lxcMigrate(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/lxc/$vmid/migrate", $data);
 
         if (!isset($response['data'])) {
@@ -1758,6 +1876,7 @@ class ProxmoxNode
      */
     public function lxcResize(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("PUT", "/nodes/$node/lxc/$vmid/resize", $data);
 
         if (!isset($response['data'])) {
@@ -1781,6 +1900,7 @@ class ProxmoxNode
         $optional['ds'] = !empty($ds) ? $ds : null;
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
 
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/rrd", $optional);
 
         if (!isset($response['data'])) {
@@ -1798,10 +1918,11 @@ class ProxmoxNode
      * @param enum $timeframe Specify the time frame you are interested in.
      * @throws Exception
      */
-    public function lxcRrddata($node, $vmid, $timeframe = null)
+    public function lxcRrddata(string $node, int $vmid, $timeframe = null)
     {
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
 
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/lxc/$vmid/rrddata", $optional);
 
         if (!isset($response['data'])) {
@@ -1821,6 +1942,7 @@ class ProxmoxNode
      */
     public function lxcSpiceproxy(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "/nodes/$node/lxc/$vmid/spiceproxy", $data);
 
         if (!isset($response['data'])) {
@@ -1840,6 +1962,7 @@ class ProxmoxNode
      */
     public function createLxcTemplate(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "/nodes/$node/lxc/$vmid/template", $data);
 
         if (!isset($response['data'])) {
@@ -1859,6 +1982,7 @@ class ProxmoxNode
      */
     public function createLxcVncproxy(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/lxc/$vmid/vncproxy", $data);
 
         if (!isset($response['data'])) {
@@ -1882,6 +2006,7 @@ class ProxmoxNode
         $optional['port'] = !empty($port) ? $port : null;
         $optional['vncticket'] = !empty($vncticket) ? $vncticket : null;
 
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "/nodes/$node/lxc/$vmid/vncwebsocket", $optional);
 
         if (!isset($response['data'])) {
@@ -1901,6 +2026,7 @@ class ProxmoxNode
     public function network(string $node, $type = null)
     {
         $optional['type'] = !empty($type) ? $type : null;
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/network", $optional);
 
         if (!isset($response['data'])) {
@@ -1919,6 +2045,7 @@ class ProxmoxNode
      */
     public function createNetwork(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/network", $data);
 
         if (!isset($response['data'])) {
@@ -1936,6 +2063,7 @@ class ProxmoxNode
      */
     public function revertNetwork(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("DELETE", "nodes/$node/network");
 
         if (!isset($response['data'])) {
@@ -1954,6 +2082,8 @@ class ProxmoxNode
      */
     public function networkIface(string $node, string $iface)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($iface, 'iface');
         $response = $this->makeRequest("GET", "/nodes/$node/network/$iface");
 
         if (!isset($response['data'])) {
@@ -1973,6 +2103,8 @@ class ProxmoxNode
      */
     public function updateNetworkIface(string $node, string $iface, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($iface, 'iface');
         $response = $this->makeRequest("PUT", "/nodes/$node/network/$iface", $data);
 
         if (!isset($response['data'])) {
@@ -1989,8 +2121,10 @@ class ProxmoxNode
      * @param string $iface
      * @throws Exception
      */
-    public function deleteNetworkIface($node, $iface)
+    public function deleteNetworkIface(string $node, string $iface)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($iface, 'iface');
         $response = $this->makeRequest("DELETE", "/nodes/$node/network/$iface");
 
         if (!isset($response['data'])) {
@@ -2008,6 +2142,7 @@ class ProxmoxNode
      */
     public function qemu(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/qemu");
 
         if (!isset($response['data'])) {
@@ -2026,6 +2161,7 @@ class ProxmoxNode
      */
     public function createQemu(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST", "nodes/$node/qemu", $data);
 
         if (!isset($response['data'])) {
@@ -2044,6 +2180,7 @@ class ProxmoxNode
      */
     public function qemuVmid(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/qemu/$vmid");
 
         if (!isset($response['data'])) {
@@ -2063,6 +2200,7 @@ class ProxmoxNode
      */
     public function deleteQemu(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("DELETE", "nodes/$node/qemu/$vmid", $data);
 
         if (array_key_exists('data', $response) && is_null($response['data'])) {
@@ -2079,8 +2217,9 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuFirewall($node, $vmid)
+    public function qemuFirewall(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall");
 
         if (!isset($response['data'])) {
@@ -2096,8 +2235,9 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuFirewallAliases($node, $vmid)
+    public function qemuFirewallAliases(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/aliases");
 
         if (!isset($response['data'])) {
@@ -2116,6 +2256,7 @@ class ProxmoxNode
      */
     public function createQemuFirewallAliase(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/aliases", $data);
 
         if (!isset($response['data'])) {
@@ -2134,6 +2275,8 @@ class ProxmoxNode
      */
     public function qemuFirewallAliasesName(string $node, int $vmid, string $name)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/aliases/$name");
 
         if (!isset($response['data'])) {
@@ -2153,6 +2296,8 @@ class ProxmoxNode
      */
     public function updateQemuFirewallAliaseName(string $node, int $vmid, string $name, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
         $response = $this->client->put("nodes/$node/qemu/$vmid/firewall/aliases/$name", $data);
 
         if (!isset($response['data'])) {
@@ -2171,6 +2316,8 @@ class ProxmoxNode
      */
     public function deleteQemuFirewallAliaseName(string $node, int $vmid, string $name)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
         $response = $this->client->delete("nodes/$node/qemu/$vmid/firewall/aliases/$name", null);
 
         if (!isset($response['data'])) {
@@ -2188,6 +2335,7 @@ class ProxmoxNode
      */
     public function qemuFirewallIpset(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/ipset");
 
         if (!isset($response['data'])) {
@@ -2206,6 +2354,7 @@ class ProxmoxNode
      */
     public function createQemuFirewallIpset(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/ipset", $data);
 
         if (!isset($response['data'])) {
@@ -2224,6 +2373,8 @@ class ProxmoxNode
      */
     public function qemuFirewallIpsetName(string $node, int $vmid, string $name)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/ipset/$name");
 
         if (!isset($response['data'])) {
@@ -2243,6 +2394,8 @@ class ProxmoxNode
      */
     public function addQemuFirewallIpsetName(string $node, int $vmid, string $name, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
         $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/ipset/$name", $data);
 
         if (!isset($response['data'])) {
@@ -2261,6 +2414,8 @@ class ProxmoxNode
      */
     public function deleteQemuFirewallIpsetName(string $node, int $vmid, string $name)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
         $response = $this->client->delete("nodes/$node/qemu/$vmid/firewall/ipset/$name", null);
 
         if (array_key_exists('data', $response) && is_null($response['data'])) {
@@ -2281,6 +2436,9 @@ class ProxmoxNode
      */
     public function qemuFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
+        $this->validateSegment($cidr, 'cidr');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/ipset/$name/$cidr");
 
         if (!isset($response['data'])) {
@@ -2301,6 +2459,9 @@ class ProxmoxNode
      */
     public function updateQemuFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
+        $this->validateSegment($cidr, 'cidr');
         $response = $this->client->put("nodes/$node/qemu/$vmid/firewall/ipset/$name/$cidr", $data);
 
         if (!isset($response['data'])) {
@@ -2320,6 +2481,9 @@ class ProxmoxNode
      */
     public function deleteQemuFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($name, 'name');
+        $this->validateSegment($cidr, 'cidr');
         $response = $this->client->delete("nodes/$node/qemu/$vmid/firewall/ipset/$name/$cidr", null);
 
         if (array_key_exists('data', $response) && is_null($response['data'])) {
@@ -2338,6 +2502,7 @@ class ProxmoxNode
      */
     public function qemuFirewallRules(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/rules");
 
         if (!isset($response['data'])) {
@@ -2356,6 +2521,7 @@ class ProxmoxNode
      */
     public function createQemuFirewallRules(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/rules", $data);
 
         if (!isset($response['data'])) {
@@ -2371,8 +2537,9 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuFirewallRulesPos($node, $vmid, $pos)
+    public function qemuFirewallRulesPos(string $node, int $vmid, int $pos)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/rules/$pos");
 
         if (!isset($response['data'])) {
@@ -2389,8 +2556,9 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function updateQemuFirewallRulesPos(string $node, int $vmid, $pos, array $data)
+    public function updateQemuFirewallRulesPos(string $node, int $vmid, int $pos, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/qemu/$vmid/firewall/rules/$pos", $data);
 
         if (!isset($response['data'])) {
@@ -2406,8 +2574,9 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function deleteQemuFirewallRulesPos(string $node, int $vmid, $pos)
+    public function deleteQemuFirewallRulesPos(string $node, int $vmid, int $pos)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->delete("nodes/$node/qemu/$vmid/firewall/rules/$pos", null);
 
         if (array_key_exists('data', $response) && is_null($response['data'])) {
@@ -2430,6 +2599,7 @@ class ProxmoxNode
         $optional['limit'] = !empty($limit) ? $limit : 50;
         $optional['start'] = !empty($start) ? $start : 0;
 
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/log", $optional);
 
         if (!isset($response['data'])) {
@@ -2447,6 +2617,7 @@ class ProxmoxNode
      */
     public function qemuFirewallOptions(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/options");
 
         if (!isset($response['data'])) {
@@ -2465,6 +2636,7 @@ class ProxmoxNode
      */
     public function setQemuFirewallOptions(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->put("/nodes/$node/qemu/$vmid/firewall/options", $data);
 
         if (!isset($response['data'])) {
@@ -2482,6 +2654,7 @@ class ProxmoxNode
      */
     public function qemuFirewallRefs(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/refs");
 
         if (!isset($response['data'])) {
@@ -2499,6 +2672,7 @@ class ProxmoxNode
      */
     public function qemuSnapshot(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/snapshot");
 
         if (!isset($response['data'])) {
@@ -2517,6 +2691,7 @@ class ProxmoxNode
      */
     public function createQemuSnapshot(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/snapshot", $data);
 
         if (!isset($response['data'])) {
@@ -2535,6 +2710,8 @@ class ProxmoxNode
      */
     public function qemuSnapname(string $node, int $vmid, string $snapname)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($snapname, 'snapname');
         $response = $this->client->get("nodes/$node/qemu/$vmid/snapshot/$snapname");
 
         if (!isset($response['data'])) {
@@ -2551,8 +2728,10 @@ class ProxmoxNode
      * @param string   snapname The name of the snapshot.
      * @throws Exception
      */
-    public function deleteQemuSnapshot($node, $vmid, $snapname)
+    public function deleteQemuSnapshot(string $node, int $vmid, string $snapname)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($snapname, 'snapname');
         $response = $this->client->delete("nodes/$node/qemu/$vmid/snapshot/$snapname");
 
         if (!isset($response['data'])) {
@@ -2569,8 +2748,10 @@ class ProxmoxNode
      * @param string   snapname The name of the snapshot.
      * @throws Exception
      */
-    public function qemuSnapnameConfig(string $node, int $vmid, $snapname)
+    public function qemuSnapnameConfig(string $node, int $vmid, string $snapname)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($snapname, 'snapname');
         $response = $this->client->get("nodes/$node/qemu/$vmid/snapshot/$snapname/config");
 
         if (!isset($response['data'])) {
@@ -2588,8 +2769,10 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function updateQemuSnapshotConfig(string $node, int $vmid, $snapname, array $data)
+    public function updateQemuSnapshotConfig(string $node, int $vmid, string $snapname, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($snapname, 'snapname');
         $response = $this->client->put("/nodes/$node/qemu/$vmid/snapshot/$snapname/config", $data);
 
         if (!isset($response['data'])) {
@@ -2607,8 +2790,10 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function QemuSnapshotRollback($node, $vmid, $snapname, $data = array())
+    public function QemuSnapshotRollback(string $node, int $vmid, string $snapname, array $data = array())
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($snapname, 'snapname');
         $response = $this->client->post("nodes/$node/qemu/$vmid/snapshot/$snapname/rollback", $data);
 
         if (!isset($response['data'])) {
@@ -2626,6 +2811,7 @@ class ProxmoxNode
      */
     public function qemuStatus(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/status");
 
         if (!isset($response['data'])) {
@@ -2643,6 +2829,7 @@ class ProxmoxNode
      */
     public function qemuCurrent(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/status/current");
 
         if (!isset($response['data'])) {
@@ -2661,6 +2848,7 @@ class ProxmoxNode
      */
     public function qemuResume(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/resume", $data);
 
         if (!isset($response['data'])) {
@@ -2679,6 +2867,7 @@ class ProxmoxNode
      */
     public function qemuReset(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/reset", $data);
 
         if (!isset($response['data'])) {
@@ -2697,6 +2886,7 @@ class ProxmoxNode
      */
     public function qemuShutdown(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/shutdown", $data);
 
         if (!isset($response['data'])) {
@@ -2715,6 +2905,7 @@ class ProxmoxNode
      */
     public function qemuStart(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/start", $data);
 
         if (!isset($response['data'])) {
@@ -2733,6 +2924,7 @@ class ProxmoxNode
      */
     public function qemuStop(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/stop", $data);
 
         if (!isset($response['data'])) {
@@ -2751,6 +2943,7 @@ class ProxmoxNode
      */
     public function qemuReboot(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/reboot", $data);
 
         if (!isset($response['data'])) {
@@ -2769,6 +2962,7 @@ class ProxmoxNode
      */
     public function qemuSuspend(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/suspend", $data);
 
         if (!isset($response['data'])) {
@@ -2787,6 +2981,7 @@ class ProxmoxNode
      */
     public function qemuAgent(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/agent", $data);
 
         if (!isset($response['data'])) {
@@ -2805,6 +3000,7 @@ class ProxmoxNode
      */
     public function qemuAgentExec(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/agent/exec", $data);
 
         if (!isset($response['data'])) {
@@ -2822,6 +3018,7 @@ class ProxmoxNode
      */
     public function qemuAgentSetUserPassword(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/agent/set-user-password", $data);
 
         if (!isset($response['data'])) {
@@ -2840,6 +3037,7 @@ class ProxmoxNode
      */
     public function qemuClone(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/clone", $data);
 
         if (!isset($response['data'])) {
@@ -2857,6 +3055,7 @@ class ProxmoxNode
      */
     public function qemuConfig(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("/nodes/$node/qemu/$vmid/config");
 
         if (!isset($response['data'])) {
@@ -2875,6 +3074,7 @@ class ProxmoxNode
      */
     public function createQemuConfig(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/config", $data);
 
         if (!isset($response['data'])) {
@@ -2892,6 +3092,7 @@ class ProxmoxNode
      */
     public function setQemuConfig(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/qemu/$vmid/config", $data);
 
         if (!isset($response['data'])) {
@@ -2909,6 +3110,7 @@ class ProxmoxNode
      */
     public function qemuFeature(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/feature");
 
         if (!isset($response['data'])) {
@@ -2927,6 +3129,7 @@ class ProxmoxNode
      */
     public function qemuMigrate(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/migrate", $data);
 
         if (!isset($response['data'])) {
@@ -2945,6 +3148,7 @@ class ProxmoxNode
      */
     public function qemuMonitor(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/monitor", $data);
 
         if (!isset($response['data'])) {
@@ -2963,6 +3167,7 @@ class ProxmoxNode
      */
     public function qemuMoveDisk(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/move_disk", $data);
 
         if (!isset($response['data'])) {
@@ -2980,6 +3185,7 @@ class ProxmoxNode
      */
     public function qemuPending(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/pending");
 
         if (!isset($response['data'])) {
@@ -2998,6 +3204,7 @@ class ProxmoxNode
      */
     public function qemuResize(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/qemu/$vmid/resize", $data);
 
         if (!isset($response['data'])) {
@@ -3020,6 +3227,7 @@ class ProxmoxNode
         $optional['ds'] = !empty($ds) ? $ds : null;
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
 
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/rrd", $optional);
 
         if (!isset($response['data'])) {
@@ -3040,6 +3248,7 @@ class ProxmoxNode
     {
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
 
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/rrddata", $optional);
 
         if (!isset($response['data'])) {
@@ -3058,6 +3267,7 @@ class ProxmoxNode
      */
     public function qemuSendkey(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/qemu/$vmid/sendkey", $data);
 
         if (!isset($response['data'])) {
@@ -3076,6 +3286,7 @@ class ProxmoxNode
      */
     public function qemuSpiceproxy(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/spiceproxy", $data);
 
         if (!isset($response['data'])) {
@@ -3094,6 +3305,7 @@ class ProxmoxNode
      */
     public function createQemuTemplate(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/template", $data);
 
         if (!isset($response['data'])) {
@@ -3112,6 +3324,7 @@ class ProxmoxNode
      */
     public function qemuUnlink(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->put("/nodes/$node/qemu/$vmid/unlink", $data);
 
         if (!isset($response['data'])) {
@@ -3130,6 +3343,7 @@ class ProxmoxNode
      */
     public function createQemuVncproxy(string $node, int $vmid, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/vncproxy", $data);
 
         if (!isset($response['data'])) {
@@ -3151,6 +3365,7 @@ class ProxmoxNode
         $optional['port'] = !empty($port) ? $port : null;
         $optional['vncticket'] = !empty($vncticket) ? $vncticket : null;
 
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/vncwebsocket", $optional);
 
         if (!isset($response['data'])) {
@@ -3168,6 +3383,7 @@ class ProxmoxNode
      */
     public function replication(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/replication");
 
         if (!isset($response['data'])) {
@@ -3186,6 +3402,8 @@ class ProxmoxNode
      */
     public function replicationId(string $node, string $id)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($id, 'id');
         $response = $this->client->get("nodes/$node/replication/$id");
 
         if (!isset($response['data'])) {
@@ -3204,6 +3422,8 @@ class ProxmoxNode
      */
     public function replicationLog(string $node, string $id)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($id, 'id');
         $response = $this->client->get("nodes/$node/replication/$id/log");
 
         if (!isset($response['data'])) {
@@ -3223,6 +3443,8 @@ class ProxmoxNode
      */
     public function replicationScheduleNow(string $node, string $id, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($id, 'id');
         $response = $this->client->post("nodes/$node/replication/$id/schedule_now", $data);
 
         if (!isset($response['data'])) {
@@ -3241,6 +3463,8 @@ class ProxmoxNode
      */
     public function replicationStatus(string $node, string $id)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($id, 'id');
         $response = $this->client->get("nodes/$node/replication/$id/status");
 
         if (!isset($response['data'])) {
@@ -3258,6 +3482,7 @@ class ProxmoxNode
      */
     public function scan(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/scan");
 
         if (!isset($response['data'])) {
@@ -3275,6 +3500,7 @@ class ProxmoxNode
      */
     public function scanGlusterfs(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/scan/glusterfs");
 
         if (!isset($response['data'])) {
@@ -3292,6 +3518,7 @@ class ProxmoxNode
      */
     public function scanIscsi(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/scan/iscsi");
 
         if (!isset($response['data'])) {
@@ -3307,8 +3534,9 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function scanLvm($node)
+    public function scanLvm(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/scan/lvm");
 
         if (!isset($response['data'])) {
@@ -3326,6 +3554,7 @@ class ProxmoxNode
      */
     public function scanLvmthin(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/scan/lvmthin");
 
         if (!isset($response['data'])) {
@@ -3343,6 +3572,7 @@ class ProxmoxNode
      */
     public function scanUsb(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/scan/usb");
 
         if (!isset($response['data'])) {
@@ -3360,6 +3590,7 @@ class ProxmoxNode
      */
     public function scanZfs(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/scan/zfs");
 
         if (!isset($response['data'])) {
@@ -3377,6 +3608,7 @@ class ProxmoxNode
      */
     public function services(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/services");
 
         if (!isset($response['data'])) {
@@ -3395,6 +3627,7 @@ class ProxmoxNode
      */
     public function listService(string $node, $service)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/services/$service");
 
         if (!isset($response['data'])) {
@@ -3414,6 +3647,8 @@ class ProxmoxNode
      */
     public function servicesReload(string $node, $service, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($service, 'service');
         $response = $this->makeRequest("POST", "nodes/$node/services/$service/reload", $data);
 
         if (!isset($response['data'])) {
@@ -3433,6 +3668,8 @@ class ProxmoxNode
      */
     public function servicesRestart(string $node, $service, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($service, 'service');
         $response = $this->makeRequest("POST", "nodes/$node/services/$service/restart", $data);
 
         if (!isset($response['data'])) {
@@ -3452,6 +3689,8 @@ class ProxmoxNode
      */
     public function servicesStart(string $node, $service, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($service, 'service');
         $response = $this->makeRequest("POST", "nodes/$node/services/$service/start", $data);
 
         if (!isset($response['data'])) {
@@ -3471,6 +3710,8 @@ class ProxmoxNode
      */
     public function servicesStop(string $node, $service, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($service, 'service');
         $response = $this->makeRequest("POST", "nodes/$node/services/$service/stop", $data);
 
         if (!isset($response['data'])) {
@@ -3489,6 +3730,8 @@ class ProxmoxNode
      */
     public function servicesState(string $node, $service)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($service, 'service');
         $response = $this->makeRequest("GET", "nodes/$node/services/$service/state");
 
         if (!isset($response['data'])) {
@@ -3515,6 +3758,7 @@ class ProxmoxNode
         $optional['target'] = !empty($target) ? $target : null;
         $optional['enabled'] = !empty($enabled) ? $enabled : null;
 
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET", "nodes/$node/storage", $optional);
 
         if (!isset($response['data'])) {
@@ -3533,6 +3777,8 @@ class ProxmoxNode
      */
     public function getStorage(string $node, string $storage)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($storage, 'storage');
         $response = $this->makeRequest("GET", "nodes/$node/storage/$storage");
 
         if (!isset($response['data'])) {
@@ -3551,6 +3797,8 @@ class ProxmoxNode
      */
     public function listStorageContent(string $node, string $storage)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($storage, 'storage');
         $response = $this->makeRequest("GET","nodes/$node/storage/$storage/content");
 
         if (!isset($response['data'])) {
@@ -3570,6 +3818,8 @@ class ProxmoxNode
      */
     public function storageContent(string $node, string $storage, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($storage, 'storage');
         $response = $this->makeRequest("POST","nodes/$node/storage/$storage/content", $data);
 
         if (!isset($response['data'])) {
@@ -3588,6 +3838,9 @@ class ProxmoxNode
      */
     public function storageContentVolume(string $node, string $storage, $volume)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($storage, 'storage');
+        $this->validateSegment($volume, 'volume');
         $response = $this->makeRequest("GET","nodes/$node/storage/$storage/content/$volume");
 
         if (!isset($response['data'])) {
@@ -3607,6 +3860,9 @@ class ProxmoxNode
      */
     public function copyStorageContentVolume(string $node, string $storage, $volume, array $data)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($storage, 'storage');
+        $this->validateSegment($volume, 'volume');
         $response = $this->makeRequest("POST","nodes/$node/storage/$storage/content/$volume", $data);
 
         if (!isset($response['data'])) {
@@ -3625,6 +3881,9 @@ class ProxmoxNode
      */
     public function deleteStorageContentVolume(string $node, string $storage, $volume)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($storage, 'storage');
+        $this->validateSegment($volume, 'volume');
         $response = $this->makeRequest("DELETE","nodes/$node/storage/$storage/content/$volume");
 
         if (!isset($response['data'])) {
@@ -3643,6 +3902,7 @@ class ProxmoxNode
      */
     public function storageRRD(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET","/nodes/$node/storage/rrd");
 
         if (!isset($response['data'])) {
@@ -3661,6 +3921,7 @@ class ProxmoxNode
      */
     public function storageRRDdata(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET","nodes/$node/storage/rrddata");
 
         if (!isset($response['data'])) {
@@ -3679,6 +3940,7 @@ class ProxmoxNode
      */
     public function storageStatus(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET","nodes/$node/storage/status");
 
         if (!isset($response['data'])) {
@@ -3698,6 +3960,7 @@ class ProxmoxNode
      */
     public function storageUpload(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET","nodes/$node/storage/upload", $data);
 
         if (!isset($response['data'])) {
@@ -3724,6 +3987,7 @@ class ProxmoxNode
         $optional['vmid']    = !empty($vmid) ? $vmid : null;
         $optional['start']   = !empty($start) ? $start : null;
 
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET","nodes/$node/tasks", $optional);
 
         if (!isset($response['data'])) {
@@ -3742,6 +4006,8 @@ class ProxmoxNode
      */
     public function tasksUpid(string $node, string $upid)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($upid, 'upid');
         $response = $this->makeRequest("GET","nodes/$node/tasks/$upid");
 
         if (!isset($response['data'])) {
@@ -3760,6 +4026,8 @@ class ProxmoxNode
      */
     public function tasksStop(string $node, string $upid)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($upid, 'upid');
         $response = $this->makeRequest("DELETE","nodes/$node/tasks/$upid");
 
         if (array_key_exists('data', $response) && is_null($response['data'])) {
@@ -3783,6 +4051,8 @@ class ProxmoxNode
         $optional['limit']   = !empty($limit) ? $limit : null;
         $optional['start']   = !empty($start) ? $start : null;
 
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($upid, 'upid');
         $response = $this->makeRequest("GET","nodes/$node/tasks/$upid/log", $optional);
 
         if (!isset($response['data'])) {
@@ -3800,6 +4070,8 @@ class ProxmoxNode
      */
     public function tasksStatus(string $node, string $upid)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($upid, 'upid');
         $response = $this->makeRequest("GET","nodes/$node/tasks/$upid/status");
 
         if (!isset($response['data'])) {
@@ -3817,6 +4089,7 @@ class ProxmoxNode
      */
     public function createVzdump(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("POST","nodes/$node/vzdump", $data);
 
         if (!isset($response['data'])) {
@@ -3831,6 +4104,7 @@ class ProxmoxNode
      */
     public function VzdumpExtractConfig($node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("GET","nodes/$node/vzdump/extractconfig");
 
         if (!isset($response['data'])) {
@@ -3848,6 +4122,7 @@ class ProxmoxNode
      */
     public function getVMs(string $node): array
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/{$node}/qemu");
 
         if (!isset($response['data'])) {
@@ -3907,6 +4182,7 @@ class ProxmoxNode
         $config = ['cpu' => 'x86-64-v2-AES'];
 
         // Create VM and get response
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/{$node}/qemu", $params);
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'VM create fail!');
@@ -3925,6 +4201,7 @@ class ProxmoxNode
 
     protected function configVM(string $node, int $vmId, array $params): array
     {
+        $this->validateSegment($node, 'node');
         return $this->client->put("nodes/{$node}/qemu/{$vmId}/config", $params);
     }
 
@@ -3948,6 +4225,8 @@ class ProxmoxNode
 
     public function checkTaskStatus(string $node, string $upid)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($upid, 'upid');
         $status = $this->client->get("nodes/{$node}/tasks/{$upid}/status");
 
         if ($status['data']['status'] === 'stopped') {
@@ -3963,6 +4242,8 @@ class ProxmoxNode
 
     public function waitForTaskCompletion(string $node, string $upid)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($upid, 'upid');
         do {
             // Poll task status
             $status = $this->client->get("nodes/{$node}/tasks/{$upid}/status");
@@ -3990,6 +4271,7 @@ class ProxmoxNode
      */
     public function getVMStatus(string $node, int $vmid): array
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/{$node}/qemu/{$vmid}/status/current");
 
         if (!isset($response['data'])) {
@@ -4006,6 +4288,7 @@ class ProxmoxNode
      */
     public function vmQuery(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         return $this->makeRequest("GET", "nodes/$node/qemu/$vmid/status/current");
     }
 
@@ -4018,6 +4301,7 @@ class ProxmoxNode
      */
     public function startVM(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/start");
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'VM start fail!');
@@ -4041,6 +4325,7 @@ class ProxmoxNode
      */
     public function stopVM(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/stop");
 
         if (!isset($response['data'])) {
@@ -4064,6 +4349,7 @@ class ProxmoxNode
      */
     public function resetVM(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/reset");
 
         if (!isset($response['data'])) {
@@ -4088,6 +4374,7 @@ class ProxmoxNode
      */
     public function statusVM(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/{$node}/qemu/{$vmid}/status/current");
 
         if (!isset($response['data'])) {
@@ -4112,6 +4399,7 @@ class ProxmoxNode
      */
     public function rebootVM(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/reboot");
 
         if (!isset($response['data'])) {
@@ -4136,6 +4424,7 @@ class ProxmoxNode
      */
     public function shutdownVM(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/shutdown");
 
         if (!isset($response['data'])) {
@@ -4160,6 +4449,7 @@ class ProxmoxNode
      */
     public function resumeVM(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/resume");
 
         if (!isset($response['data'])) {
@@ -4184,6 +4474,7 @@ class ProxmoxNode
      */
     public function suspendVM(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/suspend");
 
         if (!isset($response['data'])) {
@@ -4209,6 +4500,7 @@ class ProxmoxNode
      */
     public function renameVM(string $node, int $vmid, string $newName)
     {
+        $this->validateSegment($node, 'node');
         try {
             // First, check if VM exists
             $vmStatus = $this->client->get("nodes/{$node}/qemu/{$vmid}/status/current");
@@ -4248,6 +4540,7 @@ class ProxmoxNode
      */
     public function fixGuestAgent(string $node, int $vmid): array
     {
+        $this->validateSegment($node, 'node');
         try {
             // 1. First ensure agent is enabled in config with correct settings
             $configResult = $this->client->post("nodes/{$node}/qemu/{$vmid}/config", [
@@ -4305,6 +4598,7 @@ class ProxmoxNode
      */
     public function getDetailedAgentStatus(string $node, int $vmid): array
     {
+        $this->validateSegment($node, 'node');
         try {
             // Get VM configuration
             $config = $this->client->get("nodes/{$node}/qemu/{$vmid}/config");
@@ -4341,6 +4635,7 @@ class ProxmoxNode
      */
     public function enableGuestAgent(string $node, int $vmid): array
     {
+        $this->validateSegment($node, 'node');
         try {
             // Enable QEMU Guest Agent in VM configuration
             $config = [
@@ -4366,6 +4661,7 @@ class ProxmoxNode
      */
     public function configureGuestAgent(string $node, int $vmid): array
     {
+        $this->validateSegment($node, 'node');
         try {
             // First, enable the QEMU guest agent in VM config
             $configResult = $this->client->post("nodes/{$node}/qemu/{$vmid}/config", [
@@ -4404,6 +4700,7 @@ class ProxmoxNode
      */
     public function checkGuestAgentStatus(string $node, int $vmid): array
     {
+        $this->validateSegment($node, 'node');
         try {
             // Get VM status including agent info
             $status = $this->client->get("nodes/{$node}/qemu/{$vmid}/status/current");
@@ -4433,6 +4730,7 @@ class ProxmoxNode
      */
     public function configureNetwork(string $node, int $vmid, array $networkParams): array
     {
+        $this->validateSegment($node, 'node');
         try {
             // Validate IP format
             if (!filter_var($networkParams['ip'], FILTER_VALIDATE_IP)) {
@@ -4479,6 +4777,7 @@ class ProxmoxNode
      */
     public function setVMPassword(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("/nodes/{$node}/qemu/{$vmid}/config", [
             'ciuser' => 'root',
             'cipassword' => 'Password@@24'
@@ -4528,6 +4827,7 @@ class ProxmoxNode
 
         $params = array_merge($defaults, $params);
 
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest(
             'POST',
             "nodes/{$node}/qemu/{$templateId}/clone",
@@ -4558,6 +4858,7 @@ class ProxmoxNode
      */
     public function setVMConfig(string $node, int $vmid, array $params): array
     {
+        $this->validateSegment($node, 'node');
         return $this->makeRequest(
             'POST',
             "nodes/{$node}/qemu/{$vmid}/config",
@@ -4580,6 +4881,7 @@ class ProxmoxNode
             return ResponseHelper::generate(false, 'Storage and size parameters are required');
         }
 
+        $this->validateSegment($node, 'node');
         try {
             // Get current VM configuration
             $config = $this->client->get("nodes/{$node}/qemu/{$vmid}/config");
@@ -4647,6 +4949,7 @@ class ProxmoxNode
      */
     public function detachDisk(string $node, int $vmid, string $disk, bool $type = false)
     {
+        $this->validateSegment($node, 'node');
         try {
             // API endpoint to remove a disk
             $result = $this->client->post("nodes/{$node}/qemu/{$vmid}/config", [
@@ -4718,6 +5021,7 @@ class ProxmoxNode
      */
     public function attachSSHKey(string $node, int $vmid, string $publicKey): array
     {
+        $this->validateSegment($node, 'node');
         // First check if VM exists and uses cloud-init
         $vmConfig = $this->client->get("nodes/{$node}/qemu/{$vmid}/config");
 
@@ -4807,6 +5111,7 @@ class ProxmoxNode
      */
     public function updateVmConfig(string $node, int $vmid, $params)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/{$node}/qemu/{$vmid}/config", $params);
 
         if (!isset($response['data'])) {
@@ -4829,6 +5134,7 @@ class ProxmoxNode
             'disk' => 'scsi0', // Disk you want to resize (e.g., scsi0, virtio0)
             'size' => '+10G',  // Size to add (e.g., +10G for 10GB)
         ];
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/config", $params);
 
         if (!isset($response['data'])) {
@@ -4847,6 +5153,7 @@ class ProxmoxNode
     public function fetchAvailableIPs($node)
     {
 //        $params = ['type' => 'bridge'];
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/{$node}/network");
 
         if (!isset($response['data'])) {
@@ -4856,8 +5163,9 @@ class ProxmoxNode
     }
 
 
-    public function applyCloudInitVM($node, $vmid)
+    public function applyCloudInitVM(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         return $this->client->post("nodes/{$node}/qemu/{$vmid}/cloudinit");
     }
 
@@ -4868,8 +5176,9 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @param array $data
      */
-    public function destroyVm($node, $vmid, $data = array())
+    public function destroyVm(string $node, int $vmid, $data = array())
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->delete("nodes/$node/qemu/$vmid", $data);
 
         if (!isset($response['data'])) {
@@ -4889,6 +5198,7 @@ class ProxmoxNode
      */
     public function deleteVM(string $node, int $vmid, bool $force = false, bool $purge = true)
     {
+        $this->validateSegment($node, 'node');
         // Check if VM exists
         $vmStatus = $this->client->get("nodes/{$node}/qemu/{$vmid}/status/current");
 
@@ -4970,12 +5280,13 @@ class ProxmoxNode
         ];
     }
 
-    public function updateCredential($node, $vmid, $payload)
+    public function updateCredential(string $node, int $vmid, $payload)
     {
         $params = [
             'cipassword' => $payload['password']
         ];
 
+        $this->validateSegment($node, 'node');
         try {
             $response = $this->client->post("/nodes/{$node}/qemu/{$vmid}/config", $params);
             $successResponse = [
@@ -4994,7 +5305,7 @@ class ProxmoxNode
         }
     }
 
-    public function injectSSHCredentials($node, $vmid, $username, $password, $sshKey = null)
+    public function injectSSHCredentials(string $node, int $vmid, $username, $password, $sshKey = null)
     {
         $payload = [
             'ciuser' => $username,
@@ -5006,11 +5317,13 @@ class ProxmoxNode
         }
 
         $url = "/nodes/{$node}/qemu/{$vmid}/config";
+        $this->validateSegment($node, 'node');
         return $this->client->post("{$this->baseUrl}{$url}", $payload);
     }
 
-    public function rebuildCloudInit($node, $vmid)
+    public function rebuildCloudInit(string $node, int $vmid)
     {
+        $this->validateSegment($node, 'node');
         $url = "/nodes/{$node}/qemu/{$vmid}/cloudinit";
         return $this->client->post("{$this->baseUrl}{$url}");
 
@@ -5040,6 +5353,7 @@ class ProxmoxNode
      */
     public function diskList(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/{$node}/disks");
 
         if (!isset($response['data'])) {
@@ -5061,6 +5375,8 @@ class ProxmoxNode
      */
     public function diskTypeList(string $node, string $type)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($type, 'type');
         $response = $this->client->get("nodes/{$node}/disks/{$type}");
 
         if (!isset($response['data'])) {
@@ -5082,6 +5398,8 @@ class ProxmoxNode
      */
     public function createDiskType(string $node, string $type, array $params)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($type, 'type');
         $response = $this->client->post("nodes/{$node}/disks/{$type}", $params);
 
         if (!isset($response['data'])) {
@@ -5103,6 +5421,9 @@ class ProxmoxNode
      */
     public function deleteDiskType(string $node, string $type, $name)
     {
+        $this->validateSegment($node, 'node');
+        $this->validateSegment($type, 'type');
+        $this->validateSegment($name, 'name');
         $response = $this->client->delete("nodes/{$node}/disks/{$type}/{$name}");
 
         if (!isset($response['data'])) {
@@ -5124,6 +5445,7 @@ class ProxmoxNode
     public function vmMonitor(string $node, int $vmid, $params)
     {
         $params = ['command' => 'info'];
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/monitor", $params);
 
         if (!isset($response['data'])) {
@@ -5144,6 +5466,7 @@ class ProxmoxNode
      */
     public function vmRrddata(string $node, int $vmid, $params)
     {
+        $this->validateSegment($node, 'node');
         try {
             // Fixed URL by removing extra curly brace
             $response = $this->client->get("nodes/{$node}/qemu/{$vmid}/rrddata", $params);
@@ -5185,6 +5508,7 @@ class ProxmoxNode
 
     public function getVMMetrics(string $node, int $vmid, $params)
     {
+        $this->validateSegment($node, 'node');
         try {
             $response = $this->client->get("nodes/{$node}/qemu/{$vmid}/rrddata", $params);
 
@@ -5259,6 +5583,7 @@ class ProxmoxNode
      */
     public function aplinfo($node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/aplinfo");
 
         if (!isset($response['data'])) {
@@ -5277,6 +5602,7 @@ class ProxmoxNode
      */
     public function downloadTemplate($node, $data = array())
     {
+        $this->validateSegment($node, 'node');
         $response = $this->makeRequest("nodes/$node/aplinfo", $data, "POST");
 
         if (!isset($response['data'])) {
@@ -5294,6 +5620,7 @@ class ProxmoxNode
      */
     public function dns($node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/dns");
 
         if (!isset($response['data'])) {
@@ -5312,6 +5639,7 @@ class ProxmoxNode
      */
     public function setDns($node, $data = array())
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/dns", $data);
 
         if (!isset($response['data'])) {
@@ -5330,6 +5658,7 @@ class ProxmoxNode
      */
     public function execute($node, $data = array())
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/execute", $data);
 
         if (!isset($response['data'])) {
@@ -5348,6 +5677,7 @@ class ProxmoxNode
      */
     public function migrateAll($node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/migrateall", $data);
 
         if (!isset($response['data'])) {
@@ -5365,6 +5695,7 @@ class ProxmoxNode
      */
     public function netstat($node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/netstat");
 
         if (!isset($response['data'])) {
@@ -5382,6 +5713,7 @@ class ProxmoxNode
      */
     public function report($node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/report");
 
         if (!isset($response['data'])) {
@@ -5401,6 +5733,7 @@ class ProxmoxNode
      */
     public function rrd(string $node, $ds = null, $timeframe = null)
     {
+        $this->validateSegment($node, 'node');
         $optional['ds'] = !empty($ds) ? $ds : null;
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
         $response = $this->client->get("nodes/$node/rrd", $optional);
@@ -5421,6 +5754,7 @@ class ProxmoxNode
      */
     public function rrddata($node, $timeframe = null)
     {
+        $this->validateSegment($node, 'node');
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
         $response = $this->client->get("nodes/$node/rrddata", $optional);
 
@@ -5440,6 +5774,7 @@ class ProxmoxNode
      */
     public function spiceShell($node, $data = array())
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/spiceshell", $data);
 
         if (!isset($response['data'])) {
@@ -5458,6 +5793,7 @@ class ProxmoxNode
      */
     public function startAll($node, $data = array())
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/startall", $data);
 
         if (!isset($response['data'])) {
@@ -5476,6 +5812,7 @@ class ProxmoxNode
      */
     public function reboot(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/status", $data);
 
         if (!isset($response['data'])) {
@@ -5494,6 +5831,7 @@ class ProxmoxNode
      */
     public function stopAll(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/stopall", $data);
 
         if (!isset($response['data'])) {
@@ -5511,6 +5849,7 @@ class ProxmoxNode
      */
     public function subscription(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/subscription");
 
         if (!isset($response['data'])) {
@@ -5529,6 +5868,7 @@ class ProxmoxNode
      */
     public function updateSubscription(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/subscription", $data);
 
         if (!isset($response['data'])) {
@@ -5547,6 +5887,7 @@ class ProxmoxNode
      */
     public function setSubscription(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/subscription", $data);
 
         if (!isset($response['data'])) {
@@ -5573,6 +5914,7 @@ class ProxmoxNode
         $optional['since'] = !empty($since) ? $since : null;
         $optional['until'] = !empty($until) ? $until : null;
 
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/syslog", $optional);
 
         if (!isset($response['data'])) {
@@ -5590,6 +5932,7 @@ class ProxmoxNode
      */
     public function time(string $node)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/time");
 
         if (!isset($response['data'])) {
@@ -5608,6 +5951,7 @@ class ProxmoxNode
      */
     public function setTime(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/time", $data);
 
         if (!isset($response['data'])) {
@@ -5626,6 +5970,7 @@ class ProxmoxNode
      */
     public function createVNCShell(string $node, array $data)
     {
+        $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/vncshell", $data);
 
         if (!isset($response['data'])) {
@@ -5647,6 +5992,7 @@ class ProxmoxNode
         $optional['port'] = !empty($port) ? $port : null;
         $optional['vncticket'] = !empty($vncticket) ? $vncticket : null;
 
+        $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/vncwebsocket", $optional);
 
         if (!isset($response['data'])) {

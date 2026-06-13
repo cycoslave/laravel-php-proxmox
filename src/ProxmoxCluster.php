@@ -3,9 +3,12 @@
 namespace Cycoslave\Proxmox;
 
 use Cycoslave\Proxmox\Helpers\ResponseHelper;
+use Cycoslave\Proxmox\Traits\ValidatesPathSegments;
 
 class ProxmoxCluster
 {
+    use ValidatesPathSegments;
+
     public function __construct(protected ProxmoxAccess $client) {}
 
     /**
@@ -135,6 +138,7 @@ class ProxmoxCluster
      */
     public function backupId($id)
     {
+        $this->validateSegment((string) $id, 'id');
         $response = $this->client->get("cluster/backup/$id");
 
         if (!isset($response['data'])){
@@ -152,6 +156,7 @@ class ProxmoxCluster
      */
     public function updateBackup($id, array $data)
     {
+        $this->validateSegment((string) $id, 'id');
         $response = $this->client->put("cluster/backup/$id", $data);
 
         if (!isset($response['data'])){
@@ -168,6 +173,7 @@ class ProxmoxCluster
      */
     public function deleteBackup($id)
     {
+        $this->validateSegment((string) $id, 'id');
         $response = $this->client->delete("cluster/backup/$id");
 
         if (!isset($response['data'])){
@@ -279,6 +285,7 @@ class ProxmoxCluster
      */
     public function getFirewallAliasesName($name)
     {
+        $this->validateSegment((string) $name, 'name');
         $response = $this->client->get("cluster/firewall/aliases/$name");
 
         if (!isset($response['data'])){
@@ -297,6 +304,7 @@ class ProxmoxCluster
      */
     public function updateFirewallAliase($name, array $data)
     {
+        $this->validateSegment((string) $name, 'name');
         $response = $this->client->put("cluster/firewall/aliases/$name", $data);
 
         if (!isset($response['data'])){
@@ -313,6 +321,7 @@ class ProxmoxCluster
      */
     public function removeFirewallAliase($name)
     {
+        $this->validateSegment((string) $name, 'name');
         $response = $this->client->delete("cluster/firewall/aliases/$name");
 
         if (!isset($response['data'])){
@@ -361,6 +370,7 @@ class ProxmoxCluster
      */
     public function firewallGroupsGroup($group)
     {
+        $this->validateSegment((string) $group, 'group');
         $response = $this->client->get("cluster/firewall/groups/$group");
 
         if (!isset($response['data'])){
@@ -379,6 +389,7 @@ class ProxmoxCluster
      */
     public function createRuleFirewallGroup($group, array $data)
     {
+        $this->validateSegment((string) $group, 'group');
         $response = $this->client->post("cluster/firewall/groups/$group", $data);
 
         if (!isset($response['data'])){
@@ -395,6 +406,7 @@ class ProxmoxCluster
      */
     public function removeFirewallGroup($group)
     {
+        $this->validateSegment((string) $group, 'group');
         $response = $this->makeRequest("DELETE","cluster/firewall/groups/$group");
 
         if (!isset($response['data'])){
@@ -410,8 +422,9 @@ class ProxmoxCluster
      * @param integer $pos Update rule at position <pos>.
      * @throws \Exception
      */
-    public function firewallGroupsGroupPos($group, $pos)
+    public function firewallGroupsGroupPos(string $group, int $pos)
     {
+        $this->validateSegment((string) $group, 'group');
         $response = $this->makeRequest("GET","cluster/firewall/groups/$group/$pos");
 
         if (!isset($response['data'])){
@@ -429,8 +442,9 @@ class ProxmoxCluster
      * @return array
      * @throws \Exception
      */
-    public function setFirewallGroupPos($group, $pos, array $data)
+    public function setFirewallGroupPos(string $group, int $pos, array $data)
     {
+        $this->validateSegment((string) $group, 'group');
         $response = $this->makeRequest("PUT","cluster/firewall/groups/$group/$pos", $data);
 
         if (!isset($response['data'])){
@@ -446,8 +460,9 @@ class ProxmoxCluster
      * @param integer $pos Update rule at position <pos>.
      * @throws \Exception
      */
-    public function removeFirewallGroupPos($group, $pos)
+    public function removeFirewallGroupPos(string $group, int $pos)
     {
+        $this->validateSegment((string) $group, 'group');
         $response = $this->makeRequest("DELETE","cluster/firewall/groups/$group/$pos");
 
         if (!isset($response['data'])){
@@ -496,6 +511,7 @@ class ProxmoxCluster
      */
     public function firewallIpsetName($name)
     {
+        $this->validateSegment((string) $name, 'name');
         $response = $this->makeRequest("GET","cluster/firewall/ipset/$name");
 
         if (!isset($response['data'])){
@@ -514,6 +530,7 @@ class ProxmoxCluster
      */
     public function addFirewallIpsetName($name, array $data)
     {
+        $this->validateSegment((string) $name, 'name');
         $response = $this->makeRequest("POST","cluster/firewall/ipset/$name", $data);
 
         if (!isset($response['data'])){
@@ -530,6 +547,7 @@ class ProxmoxCluster
      */
     public function deleteFirewallIpsetName($name)
     {
+        $this->validateSegment((string) $name, 'name');
         $response = $this->makeRequest("DELETE","cluster/firewall/ipset/$name");
 
         if (!isset($response['data'])){
@@ -736,6 +754,7 @@ class ProxmoxCluster
      */
     public function haGroups($group)
     {
+        $this->validateSegment((string) $group, 'group');
         $response = $this->client->get("cluster/ha/groups/$group");
 
         if (!isset($response['data'])){
@@ -783,6 +802,7 @@ class ProxmoxCluster
      */
     public function replicationId($id)
     {
+        $this->validateSegment((string) $id, 'id');
         $response = $this->client->get("cluster/replication/$id");
 
         if (!isset($response['data'])){
@@ -800,6 +820,7 @@ class ProxmoxCluster
      */
     public function updateReplication($id, array $data)
     {
+        $this->validateSegment((string) $id, 'id');
         $response = $this->client->put("cluster/replication/$id", $data);
 
         if (!isset($response['data'])){
@@ -816,6 +837,7 @@ class ProxmoxCluster
      */
     public function deleteReplication($id)
     {
+        $this->validateSegment((string) $id, 'id');
         $response = $this->client->delete("cluster/replication/$id");
 
         if (!isset($response['data'])){

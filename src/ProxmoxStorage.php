@@ -3,9 +3,12 @@
 namespace Cycoslave\Proxmox;
 
 use Cycoslave\Proxmox\Helpers\ResponseHelper;
+use Cycoslave\Proxmox\Traits\ValidatesPathSegments;
 
 class ProxmoxStorage
 {
+    use ValidatesPathSegments;
+
     public function __construct(protected ProxmoxAccess $client) {}
 
     /**
@@ -55,6 +58,7 @@ class ProxmoxStorage
      */
     public function getStorage($storage)
     {
+        $this->validateSegment((string) $storage, 'storage');
         $response = $this->client->get("storage/$storage");
 
         if (!isset($response['data'])){
@@ -196,6 +200,7 @@ class ProxmoxStorage
      */
     public function getStorageDetails(string $storage)
     {
+        $this->validateSegment((string) $storage, 'storage');
         $response = $this->client->get("storage/{$storage}");
 
         if (!isset($response['data'])){
@@ -212,6 +217,7 @@ class ProxmoxStorage
      */
     public function deleteStorage(string $storage)
     {
+        $this->validateSegment((string) $storage, 'storage');
         $response = $this->client->delete("storage/{$storage}");
 
         if (array_key_exists('data', $response) && is_null($response['data'])) {
@@ -230,6 +236,7 @@ class ProxmoxStorage
      */
     public function updateStorage(string $storage, array $params): array
     {
+        $this->validateSegment((string) $storage, 'storage');
         $response = $this->client->put("storage/{$storage}", $params);
 
         if (!isset($response['data'])){

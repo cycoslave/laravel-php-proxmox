@@ -3,6 +3,7 @@
 namespace Cycoslave\Proxmox;
 
 use Cycoslave\Proxmox\Helpers\ResponseHelper;
+use Cycoslave\Proxmox\Traits\ValidatesPathSegments;
 
 /**
  * ProxmoxAccessApi
@@ -18,6 +19,8 @@ use Cycoslave\Proxmox\Helpers\ResponseHelper;
  */
 class ProxmoxAccessApi
 {
+    use ValidatesPathSegments;
+
     public function __construct(
         protected ProxmoxAccess $client
     ) {}
@@ -73,6 +76,7 @@ class ProxmoxAccessApi
     /** @throws \Exception */
     public function domainsRealm(string $realm): array
     {
+        $this->validateSegment($realm, 'realm');
         $response = $this->client->get("access/domains/{$realm}");
 
         if (! isset($response['data'])) {
@@ -85,6 +89,7 @@ class ProxmoxAccessApi
     /** @throws \Exception */
     public function updateDomain(string $realm, array $data): array
     {
+        $this->validateSegment($realm, 'realm');
         $response = $this->client->put("access/domains/{$realm}", $data);
 
         if (! isset($response['data'])) {
@@ -97,6 +102,7 @@ class ProxmoxAccessApi
     /** @throws \Exception */
     public function deleteDomain(string $realm): array
     {
+        $this->validateSegment($realm, 'realm');
         $response = $this->client->delete("access/domains/{$realm}");
 
         if (! isset($response['data'])) {
@@ -137,6 +143,7 @@ class ProxmoxAccessApi
     /** @throws \Exception */
     public function groupId(string $groupid): array
     {
+        $this->validateSegment($groupid, 'groupid');
         $response = $this->client->get("access/groups/{$groupid}");
 
         if (! isset($response['data'])) {
@@ -149,6 +156,7 @@ class ProxmoxAccessApi
     /** @throws \Exception */
     public function updateGroup(string $groupid, array $data): array
     {
+        $this->validateSegment($groupid, 'groupid');
         $response = $this->client->post("access/groups/{$groupid}", $data);
 
         if (! isset($response['data'])) {
@@ -161,6 +169,7 @@ class ProxmoxAccessApi
     /** @throws \Exception */
     public function deleteGroup(string $groupid): array
     {
+        $this->validateSegment($groupid, 'groupid');
         $response = $this->client->delete("access/groups/{$groupid}");
 
         if (! isset($response['data'])) {
@@ -201,6 +210,7 @@ class ProxmoxAccessApi
     /** @throws \Exception */
     public function roleId(string $roleid): array
     {
+        $this->validateSegment($roleid, 'roleid');
         $response = $this->client->get("access/roles/{$roleid}");
 
         if (! isset($response['data'])) {
@@ -213,6 +223,7 @@ class ProxmoxAccessApi
     /** @throws \Exception */
     public function updateRole(string $roleid, array $data): array
     {
+        $this->validateSegment($roleid, 'roleid');
         $response = $this->client->put("access/roles/{$roleid}", $data);
 
         if (! isset($response['data'])) {
@@ -225,6 +236,7 @@ class ProxmoxAccessApi
     /** @throws \Exception */
     public function deleteRole(string $roleid): array
     {
+        $this->validateSegment($roleid, 'roleid');
         $response = $this->client->delete("access/roles/{$roleid}");
 
         if (! isset($response['data'])) {
@@ -265,6 +277,7 @@ class ProxmoxAccessApi
     /** @throws \Exception */
     public function getUser(string $userid): array
     {
+        $this->validateSegment($userid, 'userid');
         $response = $this->client->get("access/users/{$userid}");
 
         if (! isset($response['data'])) {
@@ -277,6 +290,7 @@ class ProxmoxAccessApi
     /** @throws \Exception */
     public function updateUser(string $userid, array $data): array
     {
+        $this->validateSegment($userid, 'userid');
         $response = $this->client->put("access/users/{$userid}", $data);
 
         if (! isset($response['data'])) {
@@ -289,6 +303,7 @@ class ProxmoxAccessApi
     /** @throws \Exception */
     public function deleteUser(string $userid): array
     {
+        $this->validateSegment($userid, 'userid');
         $response = $this->client->delete("access/users/{$userid}");
 
         if (! isset($response['data'])) {
