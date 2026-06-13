@@ -17,7 +17,7 @@ class ProxmoxPools
         $response = $this->client->get('pools');
 
         if (!isset($response['data'])){
-            ResponseHelper::generate(false,'Pools system log fail.');
+            return ResponseHelper::generate(false,'Pools system log fail.');
         }
         return ResponseHelper::generate(true,'Pools system log.', $response['data']);
     }
@@ -32,7 +32,7 @@ class ProxmoxPools
         $response = $this->client->get("pools/$poolid");
 
         if (!isset($response['data'])){
-            ResponseHelper::generate(false,'Pools system log fail.');
+            return ResponseHelper::generate(false,'Pools system log fail.');
         }
         return ResponseHelper::generate(true,'Pools system log.', $response['data']);
     }
@@ -47,7 +47,7 @@ class ProxmoxPools
         $response = $this->client->put("pools/{$poolid}", $data);
 
         if (!isset($response['data'])){
-            ResponseHelper::generate(false,'Pools system log fail.');
+            return ResponseHelper::generate(false,'Pools system log fail.');
         }
         return ResponseHelper::generate(true,'Pools system log.', $response['data']);
     }
