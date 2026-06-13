@@ -32,7 +32,7 @@
         "laravel": {
             "providers": ["Cycoslave\\Proxmox\\ProxmoxServiceProvider"],
             "aliases": {
-                "Proxmox": "Cycoslave\\Proxmox\\Proxmox",
+                "Proxmox": "Cycoslave\\Proxmox\\Facades\\Proxmox",
                 "ProxmoxNodeVM": "ProxmoxNode",
                 "ProxmoxCluster": "Cycoslave\\Proxmox\\Facades\\ProxmoxCluster",
                 "ProxmoxStorage": "Cycoslave\\Proxmox\\Facades\\ProxmoxStorage"

@@ -23,6 +23,12 @@ class ProxmoxServiceProvider extends ServiceProvider
         // Each facade-backed singleton resolves the correct class from the
         // default connection. The manager is responsible for reading
         // config('proxmox.connections.{name}.*') — NOT flat keys.
+        $this->app->singleton('proxmox-access-api', function ($app) {
+            /** @var ProxmoxManager $manager */
+            $manager = $app->make(ProxmoxManager::class);
+            return $manager->accessApi();
+        });
+        
         $this->app->singleton('proxmox-node', function ($app) {
             /** @var ProxmoxManager $manager */
             $manager = $app->make(ProxmoxManager::class);
