@@ -7,14 +7,14 @@ use Cycoslave\Proxmox\Helpers\ResponseHelper;
 class ProxmoxPools
 {
     public function __construct(protected ProxmoxAccess $client) {}
-    
+
     /**
      * Read system log
      * @throws \Exception
      */
     public function pools()
     {
-        $response = $this->makeRequest('GET', 'pools');
+        $response = $this->client->get('pools');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Pools system log fail.');
@@ -29,7 +29,7 @@ class ProxmoxPools
      */
     public function poolsId($poolid)
     {
-        $response = $this->makeRequest('GET', "pools/$poolid");
+        $response = $this->client->get("pools/$poolid");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Pools system log fail.');
@@ -44,7 +44,7 @@ class ProxmoxPools
      */
     public function putPool($poolid, $data = array())
     {
-        $response = $this->makeRequest('PUT', "pools/$poolid");
+        $response = $this->client->put("pools/{$poolid}", $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Pools system log fail.');
