@@ -156,7 +156,7 @@ class ProxmoxStorage
         string $server,
         string $share,
         string $username,
-        string $password,
+        #[\SensitiveParameter] string $password,
         array $options = []
     ): array {
         $defaults = [
