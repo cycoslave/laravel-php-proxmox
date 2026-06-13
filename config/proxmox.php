@@ -27,12 +27,15 @@ return [
 
     'connections' => [
         'default' => [
-            'hostname' => env('PROXMOX_HOST', 'proxmox.example.com'),
-            'username' => env('PROXMOX_USER', 'root'),
-            'password' => env('PROXMOX_PASSWORD', ''),
-            'realm' => env('PROXMOX_REALM', 'pam'),
-            'port' => env('PROXMOX_PORT', 8006),
-            'node' => env('PROXMOX_NODE', ''),
+            'host'         => env('PROXMOX_HOST', 'proxmox.example.com'),
+            'port'         => env('PROXMOX_PORT', 8006),
+            'username'     => env('PROXMOX_USER', 'root'),
+            'realm'        => env('PROXMOX_REALM', 'pam'),
+            'password'     => env('PROXMOX_PASSWORD', null),
+            'token_id'     => env('PROXMOX_TOKEN_ID', null),
+            'token_secret' => env('PROXMOX_TOKEN_SECRET', null),
+            'verify_tls'   => env('PROXMOX_VERIFY_TLS', true),
+            'timeout'      => env('PROXMOX_TIMEOUT', 10),
         ],
 
         // You can add more named connections in your application config:
