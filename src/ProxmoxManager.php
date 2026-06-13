@@ -12,6 +12,21 @@ class ProxmoxManager
     /** @var array<string, ProxmoxAccess> */
     protected array $connections = [];
 
+    /** @var array<string, ProxmoxNode> */
+    protected array $nodes = [];
+
+    /** @var array<string, ProxmoxCluster> */
+    protected array $clusters = [];
+
+    /** @var array<string, ProxmoxStorage> */
+    protected array $storages = [];
+
+    /** @var array<string, ProxmoxPools> */
+    protected array $poolsCache = [];
+
+    /** @var array<string, ProxmoxAccessApi> */
+    protected array $accessApis = [];
+
     public function __construct(Application $app)
     {
         $this->app = $app;
@@ -58,39 +73,62 @@ class ProxmoxManager
     /**
      * Typed accessors used by the service provider singletons
      */
-
     public function node(?string $connection = null): ProxmoxNode
     {
-        return new ProxmoxNode($this->connection($connection));
+        $key = $connection ?? $this->defaultName();
+        return $this->nodes[$key] ??= new ProxmoxNode($this->connection($connection));
     }
 
     public function cluster(?string $connection = null): ProxmoxCluster
     {
-        return new ProxmoxCluster($this->connection($connection));
+        $key = $connection ?? $this->defaultName();
+        return $this->clusters[$key] ??= new ProxmoxCluster($this->connection($connection));
     }
 
     public function storage(?string $connection = null): ProxmoxStorage
     {
-        return new ProxmoxStorage($this->connection($connection));
+        $key = $connection ?? $this->defaultName();
+        return $this->storages[$key] ??= new ProxmoxStorage($this->connection($connection));
     }
 
     public function pools(?string $connection = null): ProxmoxPools
     {
-        return new ProxmoxPools($this->connection($connection));
-    }
-
-    /** Flush a cached connection (useful in tests). */
-    public function purge(?string $name = null): void
-    {
-        if ($name === null) {
-            $this->connections = [];
-        } else {
-            unset($this->connections[$name]);
-        }
+        $key = $connection ?? $this->defaultName();
+        return $this->poolsCache[$key] ??= new ProxmoxPools($this->connection($connection));
     }
 
     public function accessApi(?string $connection = null): ProxmoxAccessApi
     {
-        return new ProxmoxAccessApi($this->connection($connection));
+        $key = $connection ?? $this->defaultName();
+        return $this->accessApis[$key] ??= new ProxmoxAccessApi($this->connection($connection));
+    }
+
+    /** Also update purge() to flush resource caches too */
+    public function purge(?string $name = null): void
+    {
+        if ($name === null) {
+            $this->connections = [];
+            $this->nodes       = [];
+            $this->clusters    = [];
+            $this->storages    = [];
+            $this->poolsCache  = [];
+            $this->accessApis  = [];
+        } else {
+            unset(
+                $this->connections[$name],
+                $this->nodes[$name],
+                $this->clusters[$name],
+                $this->storages[$name],
+                $this->poolsCache[$name],
+                $this->accessApis[$name],
+            );
+        }
+    }
+
+    /** Helper used by the caching wrappers above */
+    private function defaultName(): string
+    {
+        return $this->app['config']['proxmox.default']
+            ?? throw new InvalidArgumentException('No default Proxmox connection configured.');
     }
 }

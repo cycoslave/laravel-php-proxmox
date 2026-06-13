@@ -32,10 +32,10 @@ return [
     |
     */
 
-    'default' => env('PROXMOX_CONNECTION', 'default'),
+    'default' => env('PROXMOX_CONNECTION', 'primary'),
 
     'connections' => [
-        'default' => [
+        'primary' => [
             'host'         => env('PROXMOX_HOST', 'proxmox.example.com'),
             'port'         => (int) env('PROXMOX_PORT', 8006),
             'username'     => env('PROXMOX_USER', 'root'),

@@ -9,8 +9,11 @@ class ProxmoxPools
     public function __construct(protected ProxmoxAccess $client) {}
 
     /**
-     * Read system log
-     * @throws \Exception
+     * List all resource pools.
+     *
+     * @return array{success: bool, message: string, data: mixed}
+     * @throws \Cycoslave\Proxmox\Exceptions\ApiException
+     * @throws \Cycoslave\Proxmox\Exceptions\ConnectionException
      */
     public function pools()
     {
@@ -23,9 +26,10 @@ class ProxmoxPools
     }
 
     /**
-     * pools Id system log
-     * @param string $poolid
-     * @throws \Exception
+     * Get details for a specific pool.
+     *
+     * @throws \Cycoslave\Proxmox\Exceptions\ApiException
+     * @throws \Cycoslave\Proxmox\Exceptions\ConnectionException
      */
     public function poolsId($poolid)
     {
@@ -38,9 +42,11 @@ class ProxmoxPools
     }
 
     /**
-     * Read system log
-     * @param string $poolid
-     * @throws \Exception
+     * Update a pool's comment or member list.
+     *
+     * @param  array<string, mixed>  $data
+     * @throws \Cycoslave\Proxmox\Exceptions\ApiException
+     * @throws \Cycoslave\Proxmox\Exceptions\ConnectionException
      */
     public function putPool($poolid, $data = array())
     {

@@ -14,11 +14,16 @@ use Illuminate\Support\Facades\Log;
  */
 trait Authenticator
 {
+    // TODO: These are per-process/per-worker. Under PHP-FPM or Octane,
+    //       each worker authenticates independently, causing redundant
+    //       POST /access/ticket calls under load.
+    //       Future improvement: back this with a shared cache (Redis)
+    //       keyed on connection name, with TTL = ticketExpiry.
     private ?string $ticket       = null;
     private ?string $csrf         = null;
     private ?int    $ticketExpiry = null;
 
-    private function usingTokenAuth(): bool
+    protected function usingTokenAuth(): bool
     {
         return ! empty($this->tokenId) && ! empty($this->tokenSecret);
     }
@@ -30,7 +35,7 @@ trait Authenticator
      * @return string[]
      * @throws AuthenticationException
      */
-    private function authHeaders(): array
+    protected function authHeaders(): array
     {
         if ($this->usingTokenAuth()) {
             return [
@@ -55,8 +60,15 @@ trait Authenticator
      *
      * @throws AuthenticationException
      */
-    private function loginWithTicket(): void
+    protected function loginWithTicket(): void
     {
+        if (empty($this->password)) {
+            throw new AuthenticationException(
+                'Proxmox ticket auth requires a password; none is configured. ' .
+                'Set PROXMOX_PASSWORD or use API token auth instead.'
+            );
+        }
+
         $url  = $this->baseUrl() . '/access/ticket';
         $data = [
             'username' => "{$this->username}@{$this->realm}",

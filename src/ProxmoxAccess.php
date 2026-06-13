@@ -37,9 +37,11 @@ class ProxmoxAccess
         protected bool    $verifyTls   = true,
         protected int     $timeout     = 10,
     ) {
-        Log::warning('Proxmox: TLS verification disabled. Do not use in production.', [
-            'host' => $host,
-        ]);
+        if (! $this->verifyTls) {
+            Log::warning('Proxmox: TLS verification disabled. Do not use in production.', [
+                'host' => $host,
+            ]);
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -92,7 +94,8 @@ class ProxmoxAccess
      * @param  string  $path    e.g. 'nodes' or 'nodes/pve1/qemu'
      * @param  array   $params  Optional query parameters
      * @return array   Decoded JSON response
-     * @throws \Exception
+     * @throws \Cycoslave\Proxmox\Exceptions\ConnectionException  On network/cURL failure
+     * @throws \Cycoslave\Proxmox\Exceptions\ApiException         On HTTP 4xx/5xx or bad JSON
      */
     public function get(string $path, array $params = []): array
     {
@@ -102,7 +105,8 @@ class ProxmoxAccess
     /**
      * POST request.
      *
-     * @throws \Exception
+     * @throws \Cycoslave\Proxmox\Exceptions\ConnectionException
+     * @throws \Cycoslave\Proxmox\Exceptions\ApiException
      */
     public function post(string $path, array $data = []): array
     {
@@ -112,7 +116,8 @@ class ProxmoxAccess
     /**
      * PUT request.
      *
-     * @throws \Exception
+     * @throws \Cycoslave\Proxmox\Exceptions\ConnectionException
+     * @throws \Cycoslave\Proxmox\Exceptions\ApiException
      */
     public function put(string $path, array $data = []): array
     {
@@ -122,7 +127,8 @@ class ProxmoxAccess
     /**
      * DELETE request.
      *
-     * @throws \Exception
+     * @throws \Cycoslave\Proxmox\Exceptions\ConnectionException
+     * @throws \Cycoslave\Proxmox\Exceptions\ApiException
      */
     public function delete(string $path, array $params = []): array
     {

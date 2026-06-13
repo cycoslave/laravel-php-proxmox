@@ -26,7 +26,7 @@ trait HttpClient
      * @throws ConnectionException  On cURL / network failure or timeout
      * @throws ApiException         On HTTP 4xx/5xx or invalid JSON
      */
-    private function sendRequest(
+    protected function sendRequest(
         string $method,
         string $url,
         array  $params  = [],
@@ -38,8 +38,8 @@ trait HttpClient
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => $this->verifyTls,
             CURLOPT_SSL_VERIFYHOST => $this->verifyTls ? 2 : 0,
-            CURLOPT_CONNECTTIMEOUT => min(5, $this->timeout),
-            CURLOPT_TIMEOUT        => $this->timeout,
+            CURLOPT_CONNECTTIMEOUT => max(1, min(5, $this->timeout)),
+            CURLOPT_TIMEOUT        => max(1, $this->timeout),
             CURLOPT_CUSTOMREQUEST  => $method,
             CURLOPT_HTTPHEADER     => $headers,
         ];
