@@ -16,7 +16,7 @@ class ProxmoxCluster
      */
     public function cluster()
     {
-        $response = $this->client->get('nodes');
+        $response = $this->client->get('cluster');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster fail.');
