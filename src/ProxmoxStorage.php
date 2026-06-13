@@ -45,7 +45,7 @@ class ProxmoxStorage
         $response = $this->client->post('storage', $params);
 
         if (!isset($response['data'])){
-            ResponseHelper::generate(false,'Storage create fail.');
+            return ResponseHelper::generate(false,'Storage create fail.');
         }
         return ResponseHelper::generate(true,'Storage created successfully.', $response['data']);
     }
@@ -62,7 +62,7 @@ class ProxmoxStorage
         $response = $this->client->get("storage/$storage");
 
         if (!isset($response['data'])){
-            ResponseHelper::generate(false,'Storage fail.');
+            return ResponseHelper::generate(false,'Storage fail.');
         }
         return ResponseHelper::generate(true,'Storage details.', $response['data']);
     }
@@ -176,37 +176,6 @@ class ProxmoxStorage
         ];
 
         return $this->createStorage(array_merge($defaults, $options));
-    }
-
-    /**
-     * Get Storage List
-     * @throws \Exception
-     */
-    public function getStorageList()
-    {
-        $response = $this->client->get('storage');
-
-        if (!isset($response['data'])){
-            return ResponseHelper::generate(false,'Storage list fetch fail!');
-        }
-        return ResponseHelper::generate(true,'Storage list!', $response['data']);
-    }
-
-    /**
-     * Get Storage Details
-     *
-     * @param string $storage Storage name
-     * @throws \Exception
-     */
-    public function getStorageDetails(string $storage)
-    {
-        $this->validateSegment((string) $storage, 'storage');
-        $response = $this->client->get("storage/{$storage}");
-
-        if (!isset($response['data'])){
-            return ResponseHelper::generate(false,'Storage details fetch fail!');
-        }
-        return ResponseHelper::generate(true,'Storage details fetch successfully!', $response['data']);
     }
 
     /**

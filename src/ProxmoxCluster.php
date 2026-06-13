@@ -77,7 +77,7 @@ class ProxmoxCluster
      */
     public function getClusterTasks()
     {
-        $response = $this->client->get('/cluster/tasks');
+        $response = $this->client->get('cluster/tasks');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster tasks fail.');
@@ -92,7 +92,7 @@ class ProxmoxCluster
      */
     public function getClusterLog()
     {
-        $response = $this->client->get('/cluster/log');
+        $response = $this->client->get('cluster/log');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster log fail.');
@@ -269,7 +269,7 @@ class ProxmoxCluster
      */
     public function createFirewallAliase(array $data)
     {
-        $response = $this->client->post('cluster/firewall/aliases');
+        $response = $this->client->post('cluster/firewall/aliases', $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall Create fail.');
@@ -594,7 +594,7 @@ class ProxmoxCluster
      * @param integer $pos Update rule at position <pos>.
      * @throws \Exception
      */
-    public function firewallRulesPos($pos)
+    public function firewallRulesPos(int $pos): array
     {
         $response = $this->client->get("cluster/firewall/rules/$pos");
 
@@ -611,9 +611,9 @@ class ProxmoxCluster
      * @param integer  $pos      Update rule at position <pos>.
      * @param array    $data
      */
-    public function setFirewallRulesPos($pos, $data = array())
+    public function setFirewallRulesPos(int $pos, array $data = []): array
     {
-        $response = $this->client->put("/cluster/firewall/rules/$pos", $data);
+        $response = $this->client->put("cluster/firewall/rules/$pos", $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Modify rule data fail.');

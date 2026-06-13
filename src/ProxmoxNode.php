@@ -86,9 +86,9 @@ class ProxmoxNode
      * @param string|null $name Package name.
      * @throws Exception
      */
-    public function aptChangelog(string $node, string $name = null)
+    public function aptChangelog(string $node, ?string $name = null)
     {
-        $optional['name'] = !empty($name) ? $name : null;
+        $optional['name'] = ($name !== null && $name !== '') ? $name : null;
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/apt/changelog", $optional);
 
@@ -923,7 +923,7 @@ class ProxmoxNode
      * from the Proxmox node's public interface to a VM/Container IP:Port.
      * @throws Exception
      */
-    public function removeQemuFirewallRule(string $node, int $vmid, $pos)
+    public function removeQemuFirewallRule(string $node, int $vmid, int $pos)
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->delete("nodes/$node/qemu/$vmid/firewall/rules/$pos");
@@ -997,7 +997,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function deleteLxc($node, $vmid)
+    public function deleteLxc(string $node, int $vmid)
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->delete("nodes/$node/lxc/$vmid");
@@ -1453,7 +1453,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function setLxcFirewallOptions($node, $vmid, $data = array())
+    public function setLxcFirewallOptions(string $node, int $vmid, $data = array())
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->put("/nodes/$node/lxc/$vmid/firewall/options", $data);

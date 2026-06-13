@@ -3,9 +3,12 @@
 namespace Cycoslave\Proxmox;
 
 use Cycoslave\Proxmox\Support\ResponseHelper;
+use Cycoslave\Proxmox\Traits\ValidatesPathSegments;
 
 class ProxmoxPools
 {
+    use ValidatesPathSegments;
+
     public function __construct(protected ProxmoxAccess $client) {}
 
     /**
@@ -33,6 +36,7 @@ class ProxmoxPools
      */
     public function poolsId(string $poolid): array
     {
+        $this->validateSegment($poolid, 'poolid');
         $response = $this->client->get("pools/$poolid");
 
         if (!isset($response['data'])){
@@ -50,6 +54,7 @@ class ProxmoxPools
      */
     public function putPool(string $poolid, array $data = []): array
     {
+        $this->validateSegment($poolid, 'poolid');
         $response = $this->client->put("pools/{$poolid}", $data);
 
         if (!isset($response['data'])){

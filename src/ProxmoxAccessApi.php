@@ -157,7 +157,7 @@ class ProxmoxAccessApi
     public function updateGroup(string $groupid, array $data): array
     {
         $this->validateSegment($groupid, 'groupid');
-        $response = $this->client->post("access/groups/{$groupid}", $data);
+        $response = $this->client->put("access/groups/{$groupid}", $data);
 
         if (! isset($response['data'])) {
             return ResponseHelper::generate(false, 'Access group update fail.');
