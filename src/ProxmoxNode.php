@@ -49,7 +49,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function apt(string $node)
+    public function apt(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/apt");
@@ -68,7 +68,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function updateApt(string $node, array $data)
+    public function updateApt(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/apt/update", $data);
@@ -86,7 +86,7 @@ class ProxmoxNode
      * @param string|null $name Package name.
      * @throws Exception
      */
-    public function aptChangelog(string $node, ?string $name = null)
+    public function aptChangelog(string $node, ?string $name = null): array
     {
         $optional['name'] = ($name !== null && $name !== '') ? $name : null;
         $this->validateSegment($node, 'node');
@@ -104,7 +104,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function aptUpdate(string $node)
+    public function aptUpdate(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/apt/update");
@@ -124,7 +124,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function createAptUpdate(string $node, array $data)
+    public function createAptUpdate(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/apt/update", $data);
@@ -142,7 +142,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function ceph(string $node)
+    public function ceph(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/ceph");
@@ -160,7 +160,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function cephFlags(string $node)
+    public function cephFlags(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/ceph/flags");
@@ -181,7 +181,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function setCephFlags(string $node, $flag, array $data)
+    public function setCephFlags(string $node, $flag, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/ceph/flags/$flag", $data);
@@ -200,7 +200,7 @@ class ProxmoxNode
      * @param enum $flag The ceph flag to set/unset
      * @throws Exception
      */
-    public function unsetCephFlags(string $node, $flag)
+    public function unsetCephFlags(string $node, $flag): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment((string) $flag, 'flag');
@@ -221,7 +221,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function createCephMgr(string $node, array $data)
+    public function createCephMgr(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/ceph/mgr", $data);
@@ -240,7 +240,7 @@ class ProxmoxNode
      * @param string $id The ID of the manager
      * @throws Exception
      */
-    public function destroyCephMgr(string $node, string $id)
+    public function destroyCephMgr(string $node, string $id): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($id, 'id');
@@ -259,7 +259,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function cephMon(string $node)
+    public function cephMon(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/ceph/mon");
@@ -279,7 +279,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function createCephMon(string $node, array $data)
+    public function createCephMon(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/ceph/mon", $data);
@@ -298,7 +298,7 @@ class ProxmoxNode
      * @param string $monid Monitor ID
      * @throws Exception
      */
-    public function destroyCephMon(string $node, string $monid)
+    public function destroyCephMon(string $node, string $monid): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($monid, 'monid');
@@ -317,7 +317,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function cephOsd(string $node)
+    public function cephOsd(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/ceph/osd");
@@ -337,7 +337,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function createCephOsd(string $node, array $data)
+    public function createCephOsd(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/ceph/osd", $data);
@@ -356,7 +356,7 @@ class ProxmoxNode
      * @param string $osdid OSD ID
      * @throws Exception
      */
-    public function destroyCephOsd($node, $osdid)
+    public function destroyCephOsd(string $node, string $osdid): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($osdid, 'osdid');
@@ -377,7 +377,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function cephOsdIn(string $node, string $osdid, array $data)
+    public function cephOsdIn(string $node, string $osdid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($osdid, 'osdid');
@@ -398,7 +398,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function cephOsdOut($node, $osdid, $data = array())
+    public function cephOsdOut(string $node, string $osdid, array $data = array()): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($osdid, 'osdid');
@@ -417,7 +417,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function getCephPools(string $node)
+    public function getCephPools(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/ceph/pools");
@@ -437,7 +437,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function createCephPool(string $node, array $data)
+    public function createCephPool(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/ceph/pools", $data);
@@ -455,7 +455,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function destroyCephPool(string $node)
+    public function destroyCephPool(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->delete("nodes/$node/ceph/pools");
@@ -473,7 +473,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function cephConfig(string $node)
+    public function cephConfig(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/ceph/config");
@@ -491,7 +491,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function cephCrush(string $node)
+    public function cephCrush(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/ceph/crush");
@@ -509,7 +509,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function cephDisks(string $node)
+    public function cephDisks(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/ceph/disks");
@@ -529,7 +529,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function createCephInit(string $node, array $data)
+    public function createCephInit(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/ceph/init", $data);
@@ -549,7 +549,7 @@ class ProxmoxNode
      * @param integer|null $start
      * @throws Exception
      */
-    public function cephLog(string $node, int $limit = null, int $start = null)
+    public function cephLog(string $node, int $limit = null, int $start = null): array
     {
         $optional['limit'] = !empty($limit) ? $limit : 50;
         $optional['start'] = !empty($start) ? $start : 0;
@@ -570,7 +570,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function cephRules(string $node)
+    public function cephRules(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/ceph/rules");
@@ -590,7 +590,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function cephStart(string $node, array $data)
+    public function cephStart(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/ceph/start", $data);
@@ -610,7 +610,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function cephStop(string $node, array $data)
+    public function cephStop(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/ceph/stop", $data);
@@ -628,7 +628,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function cephStatus(string $node)
+    public function cephStatus(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/ceph/status");
@@ -646,7 +646,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function getDisks(string $node)
+    public function getDisks(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/disks");
@@ -666,7 +666,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function disk(string $node, array $data)
+    public function disk(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/disks", $data);
@@ -684,7 +684,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function disksList(string $node)
+    public function disksList(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/disks/list");
@@ -703,7 +703,7 @@ class ProxmoxNode
      * @param string|null $disk Block device name
      * @throws Exception
      */
-    public function disksSmart(string $node, string $disk = null)
+    public function disksSmart(string $node, string $disk = null): array
     {
         $optional['disk'] = !empty($disk) ? $disk : null;
 
@@ -723,7 +723,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function firewall(string $node)
+    public function firewall(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/firewall");
@@ -741,7 +741,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function firewallRules(string $node)
+    public function firewallRules(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/firewall/rules");
@@ -760,7 +760,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createFirewallRule($node, array $data)
+    public function createFirewallRule(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/firewall/rules", $data);
@@ -779,7 +779,7 @@ class ProxmoxNode
      * @param integer $pos Update rule at position <pos>.
      * @throws Exception
      */
-    public function firewallRulesPos(string $node, int $pos)
+    public function firewallRulesPos(string $node, int $pos): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/firewall/rules/$pos");
@@ -799,7 +799,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function setFirewallRulePos(string $node, int $pos, array $data)
+    public function setFirewallRulePos(string $node, int $pos, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/firewall/rules/$pos", $data);
@@ -818,7 +818,7 @@ class ProxmoxNode
      * @param integer $pos Update rule at position <pos>.
      * @throws Exception
      */
-    public function deleteFirewallRulePos(string $node, int $pos)
+    public function deleteFirewallRulePos(string $node, int $pos): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->delete("nodes/$node/firewall/rules/$pos");
@@ -836,7 +836,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function firewallRulesLog(string $node)
+    public function firewallRulesLog(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/firewall/rules/log");
@@ -854,7 +854,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function firewallRulesOptions(string $node)
+    public function firewallRulesOptions(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/firewall/rules/options");
@@ -874,7 +874,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function setFirewallRuleOptions(string $node, array $data)
+    public function setFirewallRuleOptions(string $node, array $data): array
     {
         $response = $this->client->put("cluster/firewall/options", $data);
 
@@ -890,7 +890,7 @@ class ProxmoxNode
      * from the Proxmox node's public interface to a VM/Container IP:Port.
      * @throws Exception
      */
-    public function createQemuFirewallRule(string $node, int $vmid, array $data)
+    public function createQemuFirewallRule(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/rules", $data);
@@ -906,7 +906,7 @@ class ProxmoxNode
      * from the Proxmox node's public interface to a VM/Container IP:Port.
      * @throws Exception
      */
-    public function listQemuFirewallRule(string $node, int $vmid)
+    public function listQemuFirewallRule(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/rules");
@@ -923,7 +923,7 @@ class ProxmoxNode
      * from the Proxmox node's public interface to a VM/Container IP:Port.
      * @throws Exception
      */
-    public function removeQemuFirewallRule(string $node, int $vmid, int $pos)
+    public function removeQemuFirewallRule(string $node, int $vmid, int $pos): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->delete("nodes/$node/qemu/$vmid/firewall/rules/$pos");
@@ -940,7 +940,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function lxc(string $node)
+    public function lxc(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/lxc");
@@ -959,7 +959,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createLxc(string $node, array $data)
+    public function createLxc(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/lxc", $data);
@@ -978,7 +978,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function lxcVmid(string $node, int $vmid)
+    public function lxcVmid(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/lxc/$vmid");
@@ -997,7 +997,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function deleteLxc(string $node, int $vmid)
+    public function deleteLxc(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->delete("nodes/$node/lxc/$vmid");
@@ -1016,7 +1016,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function lxcFirewall(string $node, int $vmid)
+    public function lxcFirewall(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/lxc/$vmid/firewall");
@@ -1035,7 +1035,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function lxcFirewallAliases(string $node, int $vmid)
+    public function lxcFirewallAliases(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/lxc/$vmid/firewall/aliases");
@@ -1056,7 +1056,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function createLxcFirewallAliase(string $node, int $vmid, array $data)
+    public function createLxcFirewallAliase(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/lxc/$vmid/firewall/aliases", $data);
@@ -1076,7 +1076,7 @@ class ProxmoxNode
      * @param string $name Alias name.
      * @throws Exception
      */
-    public function lxcFirewallAliasesName(string $node, int $vmid, string $name)
+    public function lxcFirewallAliasesName(string $node, int $vmid, string $name): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -1098,7 +1098,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function updateLxcFirewallAliaseName(string $node, int $vmid, string $name, array $data)
+    public function updateLxcFirewallAliaseName(string $node, int $vmid, string $name, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -1119,7 +1119,7 @@ class ProxmoxNode
      * @param string $name Alias name.
      * @throws Exception
      */
-    public function deleteLxcFirewallAliaseName(string $node, int $vmid, string $name)
+    public function deleteLxcFirewallAliaseName(string $node, int $vmid, string $name): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -1139,7 +1139,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function lxcFirewallIpset(string $node, int $vmid)
+    public function lxcFirewallIpset(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/lxc/$vmid/firewall/ipset");
@@ -1159,7 +1159,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createLxcFirewallIpset(string $node, int $vmid, array $data)
+    public function createLxcFirewallIpset(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/lxc/$vmid/firewall/ipset", $data);
@@ -1179,7 +1179,7 @@ class ProxmoxNode
      * @param string $name IP set name.
      * @throws Exception
      */
-    public function lxcFirewallIpsetName(string $node, int $vmid, string $name)
+    public function lxcFirewallIpsetName(string $node, int $vmid, string $name): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -1201,7 +1201,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function addLxcFirewallIpsetName(string $node, int $vmid, string $name, array $data)
+    public function addLxcFirewallIpsetName(string $node, int $vmid, string $name, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -1222,7 +1222,7 @@ class ProxmoxNode
      * @param string $name IP set name.
      * @throws Exception
      */
-    public function deleteLxcFirewallIpsetName(string $node, int $vmid, string $name)
+    public function deleteLxcFirewallIpsetName(string $node, int $vmid, string $name): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -1244,7 +1244,7 @@ class ProxmoxNode
      * @param string $cidr Network/IP specification in CIDR format.
      * @throws Exception
      */
-    public function lxcFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr)
+    public function lxcFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -1268,7 +1268,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function updateLxcFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr, array $data)
+    public function updateLxcFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -1291,7 +1291,7 @@ class ProxmoxNode
      * @param string $cidr Network/IP specification in CIDR format.
      * @throws Exception
      */
-    public function deleteLxcFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr)
+    public function deleteLxcFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -1312,7 +1312,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function lxcFirewallRules(string $node, int $vmid)
+    public function lxcFirewallRules(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/lxc/$vmid/firewall/rules");
@@ -1332,7 +1332,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createLxcFirewallRules(string $node, int $vmid, array $data)
+    public function createLxcFirewallRules(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("/nodes/$node/lxc/$vmid/firewall/rules", $data);
@@ -1351,7 +1351,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function lxcFirewallRulesPos(string $node, int $vmid, $pos)
+    public function lxcFirewallRulesPos(string $node, int $vmid, int $pos): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("/nodes/$node/lxc/$vmid/firewall/rules/$pos");
@@ -1371,7 +1371,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function setLxcFirewallRulesPos(string $node, int $vmid, $pos, array $data)
+    public function setLxcFirewallRulesPos(string $node, int $vmid, int $pos, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/lxc/$vmid/firewall/rules/$pos", $data);
@@ -1390,7 +1390,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function deleteLxcFirewallRulesPos(string $node, int $vmid, $pos)
+    public function deleteLxcFirewallRulesPos(string $node, int $vmid, int $pos): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->delete("/nodes/$node/lxc/$vmid/firewall/rules/$pos");
@@ -1411,7 +1411,7 @@ class ProxmoxNode
      * @param integer|null $start
      * @throws Exception
      */
-    public function lxcFirewallLog(string $node, int $vmid, int $limit = null, int $start = null)
+    public function lxcFirewallLog(string $node, int $vmid, int $limit = null, int $start = null): array
     {
         $optional['limit'] = !empty($limit) ? $limit : 50;
         $optional['start'] = !empty($start) ? $start : 0;
@@ -1433,7 +1433,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function lxcFirewallOptions(string $node, int $vmid)
+    public function lxcFirewallOptions(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/lxc/$vmid/firewall/options");
@@ -1453,7 +1453,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function setLxcFirewallOptions(string $node, int $vmid, $data = array())
+    public function setLxcFirewallOptions(string $node, int $vmid, array $data = array()): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->put("/nodes/$node/lxc/$vmid/firewall/options", $data);
@@ -1472,7 +1472,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function lxcSnapshot(string $node, int $vmid)
+    public function lxcSnapshot(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/lxc/$vmid/snapshot");
@@ -1492,7 +1492,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createLxcSnapshot(string $node, int $vmid, array $data)
+    public function createLxcSnapshot(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/lxc/$vmid/snapshot", $data);
@@ -1512,7 +1512,7 @@ class ProxmoxNode
      * @param string $snapname The name of the snapshot.
      * @throws Exception
      */
-    public function lxcSnapname(string $node, int $vmid, string $snapname)
+    public function lxcSnapname(string $node, int $vmid, string $snapname): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($snapname, 'snapname');
@@ -1533,7 +1533,7 @@ class ProxmoxNode
      * @param string $snapname The name of the snapshot.
      * @throws Exception
      */
-    public function deleteLxcSnapshot(string $node, int $vmid, string $snapname)
+    public function deleteLxcSnapshot(string $node, int $vmid, string $snapname): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($snapname, 'snapname');
@@ -1554,7 +1554,7 @@ class ProxmoxNode
      * @param string $snapname The name of the snapshot.
      * @throws Exception
      */
-    public function lxcSnapnameConfig(string $node, int $vmid, string $snapname)
+    public function lxcSnapnameConfig(string $node, int $vmid, string $snapname): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($snapname, 'snapname');
@@ -1576,7 +1576,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function lxcSnapshotConfig(string $node, int $vmid, string $snapname, array $data)
+    public function lxcSnapshotConfig(string $node, int $vmid, string $snapname, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($snapname, 'snapname');
@@ -1598,7 +1598,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function lxcSnapshotRollback(string $node, int $vmid, string $snapname, array $data)
+    public function lxcSnapshotRollback(string $node, int $vmid, string $snapname, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($snapname, 'snapname');
@@ -1618,7 +1618,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function lxcStatus(string $node, int $vmid)
+    public function lxcStatus(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/lxc/$vmid/status");
@@ -1637,7 +1637,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function lxcCurrent(string $node, int $vmid)
+    public function lxcCurrent(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/lxc/$vmid/status/current");
@@ -1657,7 +1657,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function lxcResume(string $node, int $vmid, array $data)
+    public function lxcResume(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/lxc/$vmid/status/resume", $data);
@@ -1677,7 +1677,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function lxcShutdown(string $node, int $vmid, array $data)
+    public function lxcShutdown(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("/nodes/$node/lxc/$vmid/status/shutdown", $data);
@@ -1697,7 +1697,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function lxcStart(string $node, int $vmid, array $data)
+    public function lxcStart(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/lxc/$vmid/status/start", $data);
@@ -1717,7 +1717,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function lxcStop(string $node, int $vmid, array $data)
+    public function lxcStop(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/lxc/$vmid/status/stop", $data);
@@ -1736,7 +1736,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @param array $data
      */
-    public function lxcSuspend(string $node, int $vmid, $data = array())
+    public function lxcSuspend(string $node, int $vmid, array $data = array()): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/lxc/$vmid/status/suspend", $data);
@@ -1756,7 +1756,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function lxcReboot(string $node, int $vmid, array $data)
+    public function lxcReboot(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/lxc/$vmid/status/reboot", $data);
@@ -1776,7 +1776,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function lxcClone(string $node, int $vmid, array $data)
+    public function lxcClone(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("/nodes/$node/lxc/$vmid/clone", $data);
@@ -1795,7 +1795,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function lxcConfig(string $node, int $vmid)
+    public function lxcConfig(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/lxc/$vmid/config");
@@ -1815,7 +1815,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function setLxcConfig(string $node, int $vmid, array $data)
+    public function setLxcConfig(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/lxc/$vmid/config", $data);
@@ -1834,7 +1834,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function lxcFeature(string $node, int $vmid)
+    public function lxcFeature(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/lxc/$vmid/feature");
@@ -1854,7 +1854,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function lxcMigrate(string $node, int $vmid, array $data)
+    public function lxcMigrate(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/lxc/$vmid/migrate", $data);
@@ -1874,7 +1874,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function lxcResize(string $node, int $vmid, array $data)
+    public function lxcResize(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->put("/nodes/$node/lxc/$vmid/resize", $data);
@@ -1895,7 +1895,7 @@ class ProxmoxNode
      * @param enum $timeframe Specify the time frame you are interested in.
      * @throws Exception
      */
-    public function lxcRrd(string $node, int $vmid, string $ds = null, $timeframe = null)
+    public function lxcRrd(string $node, int $vmid, string $ds = null, $timeframe = null): array
     {
         $optional['ds'] = !empty($ds) ? $ds : null;
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
@@ -1918,7 +1918,7 @@ class ProxmoxNode
      * @param enum $timeframe Specify the time frame you are interested in.
      * @throws Exception
      */
-    public function lxcRrddata(string $node, int $vmid, $timeframe = null)
+    public function lxcRrddata(string $node, int $vmid, $timeframe = null): array
     {
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
 
@@ -1940,7 +1940,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function lxcSpiceproxy(string $node, int $vmid, array $data)
+    public function lxcSpiceproxy(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("/nodes/$node/lxc/$vmid/spiceproxy", $data);
@@ -1960,7 +1960,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createLxcTemplate(string $node, int $vmid, array $data)
+    public function createLxcTemplate(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("/nodes/$node/lxc/$vmid/template", $data);
@@ -1980,7 +1980,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createLxcVncproxy(string $node, int $vmid, array $data)
+    public function createLxcVncproxy(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/lxc/$vmid/vncproxy", $data);
@@ -2001,7 +2001,7 @@ class ProxmoxNode
      * @param string|null $vncticket Ticket from previous call to vncproxy.
      * @throws Exception
      */
-    public function lxcVncwebsocket(string $node, int $vmid, int $port = null, string $vncticket = null)
+    public function lxcVncwebsocket(string $node, int $vmid, int $port = null, string $vncticket = null): array
     {
         $optional['port'] = !empty($port) ? $port : null;
         $optional['vncticket'] = !empty($vncticket) ? $vncticket : null;
@@ -2023,7 +2023,7 @@ class ProxmoxNode
      * @param enum|null $type Only list specific interface types.
      * @throws Exception
      */
-    public function network(string $node, $type = null)
+    public function network(string $node, $type = null): array
     {
         $optional['type'] = !empty($type) ? $type : null;
         $this->validateSegment($node, 'node');
@@ -2043,7 +2043,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createNetwork(string $node, array $data)
+    public function createNetwork(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/network", $data);
@@ -2061,7 +2061,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function revertNetwork(string $node)
+    public function revertNetwork(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->delete("nodes/$node/network");
@@ -2080,7 +2080,7 @@ class ProxmoxNode
      * @param string $iface
      * @throws Exception
      */
-    public function networkIface(string $node, string $iface)
+    public function networkIface(string $node, string $iface): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($iface, 'iface');
@@ -2101,7 +2101,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function updateNetworkIface(string $node, string $iface, array $data)
+    public function updateNetworkIface(string $node, string $iface, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($iface, 'iface');
@@ -2121,7 +2121,7 @@ class ProxmoxNode
      * @param string $iface
      * @throws Exception
      */
-    public function deleteNetworkIface(string $node, string $iface)
+    public function deleteNetworkIface(string $node, string $iface): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($iface, 'iface');
@@ -2140,7 +2140,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function qemu(string $node)
+    public function qemu(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu");
@@ -2159,7 +2159,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createQemu(string $node, array $data)
+    public function createQemu(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu", $data);
@@ -2178,7 +2178,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuVmid(string $node, int $vmid)
+    public function qemuVmid(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid");
@@ -2198,7 +2198,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function deleteQemu(string $node, int $vmid, array $data)
+    public function deleteQemu(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->delete("nodes/$node/qemu/$vmid", $data);
@@ -2217,7 +2217,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuFirewall(string $node, int $vmid)
+    public function qemuFirewall(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall");
@@ -2235,7 +2235,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuFirewallAliases(string $node, int $vmid)
+    public function qemuFirewallAliases(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/aliases");
@@ -2254,7 +2254,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createQemuFirewallAliase(string $node, int $vmid, array $data)
+    public function createQemuFirewallAliase(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/aliases", $data);
@@ -2273,7 +2273,7 @@ class ProxmoxNode
      * @param string $name Alias name.
      * @throws Exception
      */
-    public function qemuFirewallAliasesName(string $node, int $vmid, string $name)
+    public function qemuFirewallAliasesName(string $node, int $vmid, string $name): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -2294,7 +2294,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function updateQemuFirewallAliaseName(string $node, int $vmid, string $name, array $data)
+    public function updateQemuFirewallAliaseName(string $node, int $vmid, string $name, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -2314,7 +2314,7 @@ class ProxmoxNode
      * @param string $name Alias name.
      * @throws Exception
      */
-    public function deleteQemuFirewallAliaseName(string $node, int $vmid, string $name)
+    public function deleteQemuFirewallAliaseName(string $node, int $vmid, string $name): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -2333,7 +2333,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuFirewallIpset(string $node, int $vmid)
+    public function qemuFirewallIpset(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/ipset");
@@ -2352,7 +2352,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createQemuFirewallIpset(string $node, int $vmid, array $data)
+    public function createQemuFirewallIpset(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/ipset", $data);
@@ -2371,7 +2371,7 @@ class ProxmoxNode
      * @param string $name IP set name.
      * @throws Exception
      */
-    public function qemuFirewallIpsetName(string $node, int $vmid, string $name)
+    public function qemuFirewallIpsetName(string $node, int $vmid, string $name): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -2392,7 +2392,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function addQemuFirewallIpsetName(string $node, int $vmid, string $name, array $data)
+    public function addQemuFirewallIpsetName(string $node, int $vmid, string $name, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -2412,7 +2412,7 @@ class ProxmoxNode
      * @param string $name IP set name.
      * @throws Exception
      */
-    public function deleteQemuFirewallIpsetName(string $node, int $vmid, string $name)
+    public function deleteQemuFirewallIpsetName(string $node, int $vmid, string $name): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -2434,7 +2434,7 @@ class ProxmoxNode
      * @param string $cidr Network/IP specification in CIDR format.
      * @throws Exception
      */
-    public function qemuFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr)
+    public function qemuFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -2457,7 +2457,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function updateQemuFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr, array $data)
+    public function updateQemuFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -2479,7 +2479,7 @@ class ProxmoxNode
      * @param string $cidr Network/IP specification in CIDR format.
      * @throws Exception
      */
-    public function deleteQemuFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr)
+    public function deleteQemuFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($name, 'name');
@@ -2500,7 +2500,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuFirewallRules(string $node, int $vmid)
+    public function qemuFirewallRules(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/rules");
@@ -2519,7 +2519,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createQemuFirewallRules(string $node, int $vmid, array $data)
+    public function createQemuFirewallRules(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/rules", $data);
@@ -2537,7 +2537,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuFirewallRulesPos(string $node, int $vmid, int $pos)
+    public function qemuFirewallRulesPos(string $node, int $vmid, int $pos): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/rules/$pos");
@@ -2556,7 +2556,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function updateQemuFirewallRulesPos(string $node, int $vmid, int $pos, array $data)
+    public function updateQemuFirewallRulesPos(string $node, int $vmid, int $pos, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/qemu/$vmid/firewall/rules/$pos", $data);
@@ -2574,7 +2574,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function deleteQemuFirewallRulesPos(string $node, int $vmid, int $pos)
+    public function deleteQemuFirewallRulesPos(string $node, int $vmid, int $pos): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->delete("nodes/$node/qemu/$vmid/firewall/rules/$pos", null);
@@ -2594,7 +2594,7 @@ class ProxmoxNode
      * @param integer|null $limit
      * @param integer|null $start
      */
-    public function qemuFirewallLog(string $node, int $vmid, int $limit = null, int $start = null)
+    public function qemuFirewallLog(string $node, int $vmid, int $limit = null, int $start = null): array
     {
         $optional['limit'] = !empty($limit) ? $limit : 50;
         $optional['start'] = !empty($start) ? $start : 0;
@@ -2615,7 +2615,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuFirewallOptions(string $node, int $vmid)
+    public function qemuFirewallOptions(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/options");
@@ -2634,7 +2634,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function setQemuFirewallOptions(string $node, int $vmid, array $data)
+    public function setQemuFirewallOptions(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->put("/nodes/$node/qemu/$vmid/firewall/options", $data);
@@ -2652,7 +2652,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuFirewallRefs(string $node, int $vmid)
+    public function qemuFirewallRefs(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/refs");
@@ -2670,7 +2670,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuSnapshot(string $node, int $vmid)
+    public function qemuSnapshot(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/snapshot");
@@ -2689,7 +2689,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createQemuSnapshot(string $node, int $vmid, array $data)
+    public function createQemuSnapshot(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/snapshot", $data);
@@ -2708,7 +2708,7 @@ class ProxmoxNode
      * @param string $snapname snapname The name of the snapshot.
      * @throws Exception
      */
-    public function qemuSnapname(string $node, int $vmid, string $snapname)
+    public function qemuSnapname(string $node, int $vmid, string $snapname): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($snapname, 'snapname');
@@ -2728,7 +2728,7 @@ class ProxmoxNode
      * @param string   snapname The name of the snapshot.
      * @throws Exception
      */
-    public function deleteQemuSnapshot(string $node, int $vmid, string $snapname)
+    public function deleteQemuSnapshot(string $node, int $vmid, string $snapname): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($snapname, 'snapname');
@@ -2748,7 +2748,7 @@ class ProxmoxNode
      * @param string   snapname The name of the snapshot.
      * @throws Exception
      */
-    public function qemuSnapnameConfig(string $node, int $vmid, string $snapname)
+    public function qemuSnapnameConfig(string $node, int $vmid, string $snapname): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($snapname, 'snapname');
@@ -2769,7 +2769,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function updateQemuSnapshotConfig(string $node, int $vmid, string $snapname, array $data)
+    public function updateQemuSnapshotConfig(string $node, int $vmid, string $snapname, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($snapname, 'snapname');
@@ -2790,7 +2790,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function QemuSnapshotRollback(string $node, int $vmid, string $snapname, array $data = array())
+    public function QemuSnapshotRollback(string $node, int $vmid, string $snapname, array $data = array()): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($snapname, 'snapname');
@@ -2809,7 +2809,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuStatus(string $node, int $vmid)
+    public function qemuStatus(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/status");
@@ -2827,7 +2827,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuCurrent(string $node, int $vmid)
+    public function qemuCurrent(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/status/current");
@@ -2846,7 +2846,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuResume(string $node, int $vmid, array $data)
+    public function qemuResume(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/resume", $data);
@@ -2865,7 +2865,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuReset(string $node, int $vmid, array $data)
+    public function qemuReset(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/reset", $data);
@@ -2884,7 +2884,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuShutdown(string $node, int $vmid, array $data)
+    public function qemuShutdown(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/shutdown", $data);
@@ -2903,7 +2903,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuStart(string $node, int $vmid, array $data)
+    public function qemuStart(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/start", $data);
@@ -2922,7 +2922,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuStop(string $node, int $vmid, array $data)
+    public function qemuStop(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/stop", $data);
@@ -2941,7 +2941,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuReboot(string $node, int $vmid, array $data)
+    public function qemuReboot(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/reboot", $data);
@@ -2960,7 +2960,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuSuspend(string $node, int $vmid, array $data)
+    public function qemuSuspend(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/suspend", $data);
@@ -2979,7 +2979,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuAgent(string $node, int $vmid, array $data)
+    public function qemuAgent(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/status/agent", $data);
@@ -2998,7 +2998,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuAgentExec(string $node, int $vmid, array $data)
+    public function qemuAgentExec(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/agent/exec", $data);
@@ -3016,7 +3016,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @param array $data
      */
-    public function qemuAgentSetUserPassword(string $node, int $vmid, array $data)
+    public function qemuAgentSetUserPassword(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/agent/set-user-password", $data);
@@ -3035,7 +3035,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuClone(string $node, int $vmid, array $data)
+    public function qemuClone(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/clone", $data);
@@ -3053,7 +3053,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuConfig(string $node, int $vmid)
+    public function qemuConfig(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("/nodes/$node/qemu/$vmid/config");
@@ -3072,7 +3072,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createQemuConfig(string $node, int $vmid, array $data)
+    public function createQemuConfig(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/config", $data);
@@ -3090,7 +3090,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @param array $data
      */
-    public function setQemuConfig(string $node, int $vmid, array $data)
+    public function setQemuConfig(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/qemu/$vmid/config", $data);
@@ -3108,7 +3108,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuFeature(string $node, int $vmid)
+    public function qemuFeature(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/feature");
@@ -3127,7 +3127,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuMigrate(string $node, int $vmid, array $data)
+    public function qemuMigrate(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/migrate", $data);
@@ -3146,7 +3146,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuMonitor(string $node, int $vmid, array $data)
+    public function qemuMonitor(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/monitor", $data);
@@ -3165,7 +3165,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuMoveDisk(string $node, int $vmid, array $data)
+    public function qemuMoveDisk(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/move_disk", $data);
@@ -3183,7 +3183,7 @@ class ProxmoxNode
      * @param integer $vmid The (unique) ID of the VM.
      * @throws Exception
      */
-    public function qemuPending(string $node, int $vmid)
+    public function qemuPending(string $node, int $vmid): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/qemu/$vmid/pending");
@@ -3202,7 +3202,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuResize(string $node, int $vmid, array $data)
+    public function qemuResize(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/qemu/$vmid/resize", $data);
@@ -3222,7 +3222,7 @@ class ProxmoxNode
      * @param enum $timeframe Specify the time frame you are interested in.
      * @throws Exception
      */
-    public function qemuRrd(string $node, int $vmid, string $ds = null, $timeframe = null)
+    public function qemuRrd(string $node, int $vmid, string $ds = null, $timeframe = null): array
     {
         $optional['ds'] = !empty($ds) ? $ds : null;
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
@@ -3244,7 +3244,7 @@ class ProxmoxNode
      * @param enum $timeframe Specify the time frame you are interested in.
      * @throws Exception
      */
-    public function qemuRrddata(string $node, int $vmid, $timeframe = null)
+    public function qemuRrddata(string $node, int $vmid, $timeframe = null): array
     {
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
 
@@ -3265,7 +3265,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuSendkey(string $node, int $vmid, array $data)
+    public function qemuSendkey(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->put("nodes/$node/qemu/$vmid/sendkey", $data);
@@ -3284,7 +3284,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuSpiceproxy(string $node, int $vmid, array $data)
+    public function qemuSpiceproxy(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/spiceproxy", $data);
@@ -3303,7 +3303,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createQemuTemplate(string $node, int $vmid, array $data)
+    public function createQemuTemplate(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/template", $data);
@@ -3322,7 +3322,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function qemuUnlink(string $node, int $vmid, array $data)
+    public function qemuUnlink(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->put("/nodes/$node/qemu/$vmid/unlink", $data);
@@ -3341,7 +3341,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createQemuVncproxy(string $node, int $vmid, array $data)
+    public function createQemuVncproxy(string $node, int $vmid, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/qemu/$vmid/vncproxy", $data);
@@ -3360,7 +3360,7 @@ class ProxmoxNode
      * @param integer|null $port Port number returned by previous vncproxy call.
      * @param string|null $vncticket Ticket from previous call to vncproxy.
      */
-    public function qemuVncwebsocket(string $node, int $vmid, int $port = null, string $vncticket = null)
+    public function qemuVncwebsocket(string $node, int $vmid, int $port = null, string $vncticket = null): array
     {
         $optional['port'] = !empty($port) ? $port : null;
         $optional['vncticket'] = !empty($vncticket) ? $vncticket : null;
@@ -3381,7 +3381,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function replication(string $node)
+    public function replication(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/replication");
@@ -3400,7 +3400,7 @@ class ProxmoxNode
      * @param string $id Replication Job ID. The ID is composed of a Guest ID and a job number, separated by a hyphen, i.e. '<GUEST>-<JOBNUM>'.
      * @throws Exception
      */
-    public function replicationId(string $node, string $id)
+    public function replicationId(string $node, string $id): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($id, 'id');
@@ -3420,7 +3420,7 @@ class ProxmoxNode
      * @param string $id Replication Job ID. The ID is composed of a Guest ID and a job number, separated by a hyphen, i.e. '<GUEST>-<JOBNUM>'.
      * @throws Exception
      */
-    public function replicationLog(string $node, string $id)
+    public function replicationLog(string $node, string $id): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($id, 'id');
@@ -3441,7 +3441,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function replicationScheduleNow(string $node, string $id, array $data)
+    public function replicationScheduleNow(string $node, string $id, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($id, 'id');
@@ -3461,7 +3461,7 @@ class ProxmoxNode
      * @param string $id Replication Job ID. The ID is composed of a Guest ID and a job number, separated by a hyphen, i.e. '<GUEST>-<JOBNUM>'.
      * @throws Exception
      */
-    public function replicationStatus(string $node, string $id)
+    public function replicationStatus(string $node, string $id): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($id, 'id');
@@ -3480,7 +3480,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function scan(string $node)
+    public function scan(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/scan");
@@ -3498,7 +3498,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function scanGlusterfs(string $node)
+    public function scanGlusterfs(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/scan/glusterfs");
@@ -3516,7 +3516,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function scanIscsi(string $node)
+    public function scanIscsi(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/scan/iscsi");
@@ -3534,7 +3534,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function scanLvm(string $node)
+    public function scanLvm(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/scan/lvm");
@@ -3552,7 +3552,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function scanLvmthin(string $node)
+    public function scanLvmthin(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/scan/lvmthin");
@@ -3570,7 +3570,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function scanUsb(string $node)
+    public function scanUsb(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/scan/usb");
@@ -3588,7 +3588,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function scanZfs(string $node)
+    public function scanZfs(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/scan/zfs");
@@ -3606,7 +3606,7 @@ class ProxmoxNode
      * @param string $node The cluster node name.
      * @throws Exception
      */
-    public function services(string $node)
+    public function services(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/services");
@@ -3625,7 +3625,7 @@ class ProxmoxNode
      * @param enum $service Service ID
      * @throws Exception
      */
-    public function listService(string $node, $service)
+    public function listService(string $node, $service): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/services/$service");
@@ -3645,7 +3645,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function servicesReload(string $node, $service, array $data)
+    public function servicesReload(string $node, $service, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($service, 'service');
@@ -3666,7 +3666,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function servicesRestart(string $node, $service, array $data)
+    public function servicesRestart(string $node, $service, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($service, 'service');
@@ -3687,7 +3687,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function servicesStart(string $node, $service, array $data)
+    public function servicesStart(string $node, $service, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($service, 'service');
@@ -3708,7 +3708,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function servicesStop(string $node, $service, array $data)
+    public function servicesStop(string $node, $service, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($service, 'service');
@@ -3728,7 +3728,7 @@ class ProxmoxNode
      * @param enum $service Service ID
      * @throws Exception
      */
-    public function servicesState(string $node, $service)
+    public function servicesState(string $node, $service): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($service, 'service');
@@ -3751,7 +3751,7 @@ class ProxmoxNode
      * @param boolean|null $enabled Only list stores which are enabled (not disabled in config).
      * @throws Exception
      */
-    public function storage(string $node, string $content = null, string $storage = null, string $target = null, bool $enabled = null)
+    public function storage(string $node, string $content = null, string $storage = null, string $target = null, bool $enabled = null): array
     {
         $optional['content'] = !empty($content) ? $content : null;
         $optional['storage'] = !empty($storage) ? $storage : null;
@@ -3775,7 +3775,7 @@ class ProxmoxNode
      * @param string $storage The storage identifier.
      * @throws Exception
      */
-    public function getStorage(string $node, string $storage)
+    public function getStorage(string $node, string $storage): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($storage, 'storage');
@@ -3795,7 +3795,7 @@ class ProxmoxNode
      * @param string $storage The storage identifier.
      * @throws Exception
      */
-    public function listStorageContent(string $node, string $storage)
+    public function listStorageContent(string $node, string $storage): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($storage, 'storage');
@@ -3816,7 +3816,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function storageContent(string $node, string $storage, array $data)
+    public function storageContent(string $node, string $storage, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($storage, 'storage');
@@ -3836,7 +3836,7 @@ class ProxmoxNode
      * @param string $storage The storage identifier.
      * @throws Exception
      */
-    public function storageContentVolume(string $node, string $storage, $volume)
+    public function storageContentVolume(string $node, string $storage, $volume): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($storage, 'storage');
@@ -3858,7 +3858,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function copyStorageContentVolume(string $node, string $storage, $volume, array $data)
+    public function copyStorageContentVolume(string $node, string $storage, $volume, array $data): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($storage, 'storage');
@@ -3879,7 +3879,7 @@ class ProxmoxNode
      * @param string $storage The storage identifier.
      * @throws Exception
      */
-    public function deleteStorageContentVolume(string $node, string $storage, $volume)
+    public function deleteStorageContentVolume(string $node, string $storage, $volume): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($storage, 'storage');
@@ -3900,7 +3900,7 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function storageRRD(string $node)
+    public function storageRRD(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("/nodes/$node/storage/rrd");
@@ -3919,7 +3919,7 @@ class ProxmoxNode
      * @return mixed
      * @throws Exception
      */
-    public function storageRRDdata(string $node)
+    public function storageRRDdata(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/storage/rrddata");
@@ -3938,7 +3938,7 @@ class ProxmoxNode
      * @param string $storage The storage identifier.
      * @throws Exception
      */
-    public function storageStatus(string $node)
+    public function storageStatus(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/storage/status");
@@ -3958,7 +3958,7 @@ class ProxmoxNode
      * @return mixed
      * @throws Exception
      */
-    public function storageUpload(string $node, array $data)
+    public function storageUpload(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/storage/upload", $data);
@@ -3980,7 +3980,7 @@ class ProxmoxNode
      * @param integer|null $start
      * @throws Exception
      */
-    public function tasks(string $node, bool $errors = null, int $limit = null, int $vmid = null, int $start = null)
+    public function tasks(string $node, bool $errors = null, int $limit = null, int $vmid = null, int $start = null): array
     {
         $optional['errors']  = !empty($errors) ? $errors : false;
         $optional['limit']   = !empty($limit) ? $limit : null;
@@ -4004,7 +4004,7 @@ class ProxmoxNode
      * @param string $upid
      * @throws Exception
      */
-    public function tasksUpid(string $node, string $upid)
+    public function tasksUpid(string $node, string $upid): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($upid, 'upid');
@@ -4024,7 +4024,7 @@ class ProxmoxNode
      * @param string $upid
      * @throws Exception
      */
-    public function tasksStop(string $node, string $upid)
+    public function tasksStop(string $node, string $upid): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($upid, 'upid');
@@ -4046,7 +4046,7 @@ class ProxmoxNode
      * @param integer $start
      * @throws Exception
      */
-    public function tasksLog(string $node, string $upid, $limit = null, $start = null)
+    public function tasksLog(string $node, string $upid, int $limit = null, int $start = null): array
     {
         $optional['limit']   = !empty($limit) ? $limit : null;
         $optional['start']   = !empty($start) ? $start : null;
@@ -4068,7 +4068,7 @@ class ProxmoxNode
      * @param string $upid
      * @throws Exception
      */
-    public function tasksStatus(string $node, string $upid)
+    public function tasksStatus(string $node, string $upid): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($upid, 'upid');
@@ -4087,7 +4087,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function createVzdump(string $node, array $data)
+    public function createVzdump(string $node, array $data): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("nodes/$node/vzdump", $data);
@@ -4102,7 +4102,7 @@ class ProxmoxNode
      * GET /api2/json/nodes/{node}/vzdump/extractconfig
      * @param string   $node     The cluster node name.
      */
-    public function VzdumpExtractConfig($node)
+    public function VzdumpExtractConfig(string $node): array
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->get("nodes/$node/vzdump/extractconfig");
@@ -4151,7 +4151,7 @@ class ProxmoxNode
      * @return \Illuminate\Http\JsonResponse
      * @throws Exception
      */
-    public function createVM(string $node, array $params)
+    public function createVM(string $node, array $params): array
     {
         // Get next available VMID if not provided
         if (!isset($params['vmid'])) {
