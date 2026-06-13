@@ -1354,7 +1354,7 @@ class ProxmoxNode
     public function lxcFirewallRulesPos(string $node, int $vmid, int $pos): array
     {
         $this->validateSegment($node, 'node');
-        $response = $this->client->post("/nodes/$node/lxc/$vmid/firewall/rules/$pos");
+        $response = $this->client->get("/nodes/$node/lxc/$vmid/firewall/rules/$pos");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Get single rule data fail!');
@@ -2790,7 +2790,7 @@ class ProxmoxNode
      * @param array $data
      * @throws Exception
      */
-    public function QemuSnapshotRollback(string $node, int $vmid, string $snapname, array $data = array()): array
+    public function qemuSnapshotRollback(string $node, int $vmid, string $snapname, array $data = array()): array
     {
         $this->validateSegment($node, 'node');
         $this->validateSegment($snapname, 'snapname');
