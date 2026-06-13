@@ -32,7 +32,7 @@ class ProxmoxCluster
      */
     public function listBackup()
     {
-        $response = $this->makeRequest("GET", "cluster/backup");
+        $response = $this->client->get("cluster/backup");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster backup.');
@@ -407,7 +407,7 @@ class ProxmoxCluster
     public function removeFirewallGroup($group)
     {
         $this->validateSegment((string) $group, 'group');
-        $response = $this->makeRequest("DELETE","cluster/firewall/groups/$group");
+        $response = $this->client->delete("cluster/firewall/groups/$group");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall remove fail.');
@@ -425,7 +425,7 @@ class ProxmoxCluster
     public function firewallGroupsGroupPos(string $group, int $pos)
     {
         $this->validateSegment((string) $group, 'group');
-        $response = $this->makeRequest("GET","cluster/firewall/groups/$group/$pos");
+        $response = $this->client->get("cluster/firewall/groups/$group/$pos");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall group position fail.');
@@ -445,7 +445,7 @@ class ProxmoxCluster
     public function setFirewallGroupPos(string $group, int $pos, array $data)
     {
         $this->validateSegment((string) $group, 'group');
-        $response = $this->makeRequest("PUT","cluster/firewall/groups/$group/$pos", $data);
+        $response = $this->client->put("cluster/firewall/groups/$group/$pos", $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall group position update fail.');
@@ -463,7 +463,7 @@ class ProxmoxCluster
     public function removeFirewallGroupPos(string $group, int $pos)
     {
         $this->validateSegment((string) $group, 'group');
-        $response = $this->makeRequest("DELETE","cluster/firewall/groups/$group/$pos");
+        $response = $this->client->delete("cluster/firewall/groups/$group/$pos");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall group position delete fail.');
@@ -478,7 +478,7 @@ class ProxmoxCluster
      */
     public function firewallListIpset()
     {
-        $response = $this->makeRequest("GET",'cluster/firewall/ipset');
+        $response = $this->client->get('cluster/firewall/ipset');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall ips fail.');
@@ -495,7 +495,7 @@ class ProxmoxCluster
      */
     public function createFirewallIpset(array $data)
     {
-        $response = $this->makeRequest("POST",'cluster/firewall/ipset', $data);
+        $response = $this->client->post('cluster/firewall/ipset', $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall ip create fail.');
@@ -512,7 +512,7 @@ class ProxmoxCluster
     public function firewallIpsetName($name)
     {
         $this->validateSegment((string) $name, 'name');
-        $response = $this->makeRequest("GET","cluster/firewall/ipset/$name");
+        $response = $this->client->get("cluster/firewall/ipset/$name");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall ip details fail.');
@@ -531,7 +531,7 @@ class ProxmoxCluster
     public function addFirewallIpsetName($name, array $data)
     {
         $this->validateSegment((string) $name, 'name');
-        $response = $this->makeRequest("POST","cluster/firewall/ipset/$name", $data);
+        $response = $this->client->post("cluster/firewall/ipset/$name", $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall ip add fail.');
@@ -548,7 +548,7 @@ class ProxmoxCluster
     public function deleteFirewallIpsetName($name)
     {
         $this->validateSegment((string) $name, 'name');
-        $response = $this->makeRequest("DELETE","cluster/firewall/ipset/$name");
+        $response = $this->client->delete("cluster/firewall/ipset/$name");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall ip delete fail.');
@@ -563,7 +563,7 @@ class ProxmoxCluster
      */
     public function firewallListRules()
     {
-        $response = $this->makeRequest("GET","cluster/firewall/rules");
+        $response = $this->client->get("cluster/firewall/rules");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall list rules fail.');
@@ -580,7 +580,7 @@ class ProxmoxCluster
      */
     public function createFirewallRules(array $data)
     {
-        $response = $this->makeRequest("POST","cluster/firewall/rules", $data);
+        $response = $this->client->post("cluster/firewall/rules", $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall create rule fail.');
@@ -596,7 +596,7 @@ class ProxmoxCluster
      */
     public function firewallRulesPos($pos)
     {
-        $response = $this->makeRequest("GET","cluster/firewall/rules/$pos");
+        $response = $this->client->get("cluster/firewall/rules/$pos");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall Get single rule data fail.');
@@ -613,7 +613,7 @@ class ProxmoxCluster
      */
     public function setFirewallRulesPos($pos, $data = array())
     {
-        $response = $this->makeRequest("PUT","/cluster/firewall/rules/$pos", $data);
+        $response = $this->client->put("/cluster/firewall/rules/$pos", $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Modify rule data fail.');
@@ -646,7 +646,7 @@ class ProxmoxCluster
      */
     public function deleteFirewallRulesPos($pos)
     {
-        $response = $this->makeRequest("DELETE","cluster/firewall/rules/$pos");
+        $response = $this->client->delete("cluster/firewall/rules/$pos");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall rule delete fail.');
@@ -661,7 +661,7 @@ class ProxmoxCluster
      */
     public function firewallListMacros()
     {
-        $response = $this->makeRequest("GET","cluster/firewall/macros");
+        $response = $this->client->get("cluster/firewall/macros");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall macros fail.');
@@ -676,7 +676,7 @@ class ProxmoxCluster
      */
     public function firewallListOptions()
     {
-        $response = $this->makeRequest("GET","cluster/firewall/options");
+        $response = $this->client->get("cluster/firewall/options");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall options fail.');
@@ -692,7 +692,7 @@ class ProxmoxCluster
      */
     public function setFirewallOptions(array $data)
     {
-        $response = $this->makeRequest("PUT","cluster/firewall/options", $data);
+        $response = $this->client->put("cluster/firewall/options", $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall options update fail.');
@@ -707,7 +707,7 @@ class ProxmoxCluster
      */
     public function firewallListRefs()
     {
-        $response = $this->makeRequest("GET","cluster/firewall/refs");
+        $response = $this->client->get("cluster/firewall/refs");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall refs fail.');

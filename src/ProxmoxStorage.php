@@ -19,7 +19,7 @@ class ProxmoxStorage
     public function storage($type = null)
     {
         $params['type'] = !empty($type) ? $type : null;
-        $response = $this->makeRequest('GET','storage', $params);
+        $response = $this->client->get('storage', $params);
 
         if (!isset($response['data'])){
             return ResponseHelper::generate(false,'Storage list fetch fail!');
