@@ -4,14 +4,16 @@ namespace Cycoslave\Proxmox;
 
 use Cycoslave\Proxmox\Helpers\ResponseHelper;
 
-class ProxmoxCluster extends Proxmox
+class ProxmoxCluster
 {
+    public function __construct(protected ProxmoxAccess $client) {}
+
     /**
      * @throws \Exception
      */
     public function cluster()
     {
-        $response = $this->makeRequest('GET', 'nodes');
+        $response = $this->client->get('nodes');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster fail.');
@@ -42,7 +44,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function getClusterStatus()
     {
-        $response = $this->makeRequest('GET', 'cluster/status');
+        $response = $this->client->get('cluster/status');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster status fail.');
@@ -57,7 +59,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function getClusterResources()
     {
-        $response = $this->makeRequest('GET', 'cluster/resources');
+        $response = $this->client->get('cluster/resources');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster resources fail.');
@@ -72,7 +74,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function getClusterTasks()
     {
-        $response = $this->makeRequest('GET', '/cluster/tasks');
+        $response = $this->client->get('/cluster/tasks');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster tasks fail.');
@@ -87,7 +89,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function getClusterLog()
     {
-        $response = $this->makeRequest('GET', '/cluster/log');
+        $response = $this->client->get('/cluster/log');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster log fail.');
@@ -102,7 +104,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function getBackupSchedule()
     {
-        $response = $this->makeRequest('GET', 'cluster/backup');
+        $response = $this->client->get('cluster/backup');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster backup schedule fail.');
@@ -117,7 +119,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function createBackup($data)
     {
-        $response = $this->makeRequest('POST', 'cluster/backup', $data);
+        $response = $this->client->post('cluster/backup', $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster Create backup schedule fail.');
@@ -133,7 +135,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function backupId($id)
     {
-        $response = $this->makeRequest('GET', "cluster/backup/$id");
+        $response = $this->client->get("cluster/backup/$id");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster backup job fail.');
@@ -150,7 +152,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function updateBackup($id, array $data)
     {
-        $response = $this->makeRequest('PUT', "cluster/backup/$id", $data);
+        $response = $this->client->put("cluster/backup/$id", $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster backup job create fail.');
@@ -166,7 +168,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function deleteBackup($id)
     {
-        $response = $this->makeRequest('DELETE', "cluster/backup/$id");
+        $response = $this->client->delete("cluster/backup/$id");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster backup job delete fail.');
@@ -181,7 +183,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function config()
     {
-        $response = $this->makeRequest('GET', "cluster/config");
+        $response = $this->client->get("cluster/config");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster config fail.');
@@ -197,7 +199,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function listConfigNodes()
     {
-        $response = $this->makeRequest('GET', "cluster/config/nodes");
+        $response = $this->client->get("cluster/config/nodes");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster node config fail.');
@@ -213,7 +215,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function configTotem()
     {
-        $response = $this->makeRequest('GET', "cluster/config/totem");
+        $response = $this->client->get("cluster/config/totem");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster totem protocol settings fail.');
@@ -229,7 +231,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function firewall()
     {
-        $response = $this->makeRequest('GET', 'cluster/firewall');
+        $response = $this->client->get('cluster/firewall');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall fail.');
@@ -244,7 +246,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function firewallListAliases()
     {
-        $response = $this->makeRequest('GET', 'cluster/firewall/aliases');
+        $response = $this->client->get('cluster/firewall/aliases');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall aliases fail.');
@@ -261,7 +263,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function createFirewallAliase(array $data)
     {
-        $response = $this->makeRequest('POST', 'cluster/firewall/aliases');
+        $response = $this->client->post('cluster/firewall/aliases');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall Create fail.');
@@ -277,7 +279,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function getFirewallAliasesName($name)
     {
-        $response = $this->makeRequest('GET', "cluster/firewall/aliases/$name");
+        $response = $this->client->get("cluster/firewall/aliases/$name");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall alias fail.');
@@ -295,7 +297,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function updateFirewallAliase($name, array $data)
     {
-        $response = $this->makeRequest('PUT', "cluster/firewall/aliases/$name", $data);
+        $response = $this->client->put("cluster/firewall/aliases/$name", $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall alias update fail.');
@@ -311,7 +313,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function removeFirewallAliase($name)
     {
-        $response = $this->makeRequest('DELETE', "cluster/firewall/aliases/$name");
+        $response = $this->client->delete("cluster/firewall/aliases/$name");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall alias delete fail.');
@@ -326,7 +328,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function firewallListGroups()
     {
-        $response = $this->makeRequest('GET', "cluster/firewall/groups");
+        $response = $this->client->get("cluster/firewall/groups");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall groups fail.');
@@ -343,7 +345,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function createFirewallGroup(array $data)
     {
-        $response = $this->makeRequest('POST', "cluster/firewall/groups");
+        $response = $this->client->post("cluster/firewall/groups");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall security group fail.');
@@ -359,7 +361,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function firewallGroupsGroup($group)
     {
-        $response = $this->makeRequest('GET', "cluster/firewall/groups/$group");
+        $response = $this->client->get("cluster/firewall/groups/$group");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall security group fail.');
@@ -377,7 +379,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function createRuleFirewallGroup($group, array $data)
     {
-        $response = $this->makeRequest('POST', "cluster/firewall/groups/$group", $data);
+        $response = $this->client->post("cluster/firewall/groups/$group", $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall create fail.');
@@ -608,7 +610,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function updateFirewallSettings($data)
     {
-        $response = $this->makeRequest('PUT', 'cluster/firewall', $data);
+        $response = $this->client->put('cluster/firewall', $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster firewall update fail.');
@@ -702,7 +704,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function getHAResources()
     {
-        $response = $this->makeRequest('GET', 'cluster/ha/resources');
+        $response = $this->client->get('cluster/ha/resources');
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster HA resources fail.');
@@ -718,7 +720,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function getHaGroups()
     {
-        $response = $this->makeRequest('GET', "cluster/ha/groups");
+        $response = $this->client->get("cluster/ha/groups");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster HA group fail.');
@@ -734,7 +736,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function haGroups($group)
     {
-        $response = $this->makeRequest('GET', "cluster/ha/groups/$group");
+        $response = $this->client->get("cluster/ha/groups/$group");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster HA group fail.');
@@ -749,7 +751,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function replication()
     {
-        $response = $this->makeRequest('GET', "cluster/replication");
+        $response = $this->client->get("cluster/replication");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster replication fail.');
@@ -765,7 +767,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function createReplication(array $data)
     {
-        $response = $this->makeRequest('POST', "cluster/replication", $data);
+        $response = $this->client->post("cluster/replication", $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster replication create fail.');
@@ -781,7 +783,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function replicationId($id)
     {
-        $response = $this->makeRequest('GET', "cluster/replication/$id");
+        $response = $this->client->get("cluster/replication/$id");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster replication details fail.');
@@ -798,7 +800,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function updateReplication($id, array $data)
     {
-        $response = $this->makeRequest('PUT', "cluster/replication/$id", $data);
+        $response = $this->client->put("cluster/replication/$id", $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster replication update fail.');
@@ -814,7 +816,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function deleteReplication($id)
     {
-        $response = $this->makeRequest('DELETE', "cluster/replication/$id");
+        $response = $this->client->delete("cluster/replication/$id");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster replication delete fail.');
@@ -830,7 +832,7 @@ class ProxmoxCluster extends Proxmox
     public function log($max = null)
     {
         $optional['max'] = !empty($max) ? $max : null;
-        $response = $this->makeRequest('GET', "cluster/log", $optional);
+        $response = $this->client->get("cluster/log", $optional);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster log fail.');
@@ -848,7 +850,7 @@ class ProxmoxCluster extends Proxmox
     {
         $optional['vmid'] = !empty($vmid) ? $vmid : null;
 
-        $response = $this->makeRequest('GET', "cluster/nextid", $optional);
+        $response = $this->client->get("cluster/nextid", $optional);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster next Vmid fail.');
@@ -863,7 +865,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function options()
     {
-        $response = $this->makeRequest('GET', "cluster/options");
+        $response = $this->client->get("cluster/options");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster datacenter options fail.');
@@ -880,7 +882,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function setOptions(array $data)
     {
-        $response = $this->makeRequest('PUT', "cluster/options", $data);
+        $response = $this->client->put("cluster/options", $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster set datacenter options fail.');
@@ -897,7 +899,7 @@ class ProxmoxCluster extends Proxmox
     public function resources($type = null)
     {
         $optional['type'] = !empty($type) ? $type : null;
-        $response = $this->makeRequest('GET', "cluster/resources", $optional);
+        $response = $this->client->get("cluster/resources", $optional);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster resources fail.');
@@ -912,7 +914,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function status()
     {
-        $response = $this->makeRequest('GET', "cluster/status");
+        $response = $this->client->get("cluster/status");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster status fail.');
@@ -925,7 +927,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function tasks()
     {
-        $response = $this->makeRequest('GET', "cluster/tasks");
+        $response = $this->client->get("cluster/tasks");
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster tasks fail.');
@@ -940,7 +942,7 @@ class ProxmoxCluster extends Proxmox
      */
     public function createHAResource($data)
     {
-        $response = $this->makeRequest('POST', 'cluster/ha/resources', $data);
+        $response = $this->client->post('cluster/ha/resources', $data);
 
         if (!isset($response['data'])){
             ResponseHelper::generate(false,'Cluster Create HA resource fail.');

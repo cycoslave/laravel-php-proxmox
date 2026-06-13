@@ -4,8 +4,10 @@ namespace Cycoslave\Proxmox;
 
 use Cycoslave\Proxmox\Helpers\ResponseHelper;
 
-class ProxmoxPools extends Proxmox
+class ProxmoxPools
 {
+    public function __construct(protected ProxmoxAccess $client) {}
+    
     /**
      * Read system log
      * @throws \Exception

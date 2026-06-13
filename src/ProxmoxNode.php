@@ -5,8 +5,10 @@ namespace Cycoslave\Proxmox;
 use Exception;
 use Cycoslave\Proxmox\Helpers\ResponseHelper;
 
-class ProxmoxNode extends Proxmox
+class ProxmoxNode
 {
+    public function __construct(protected ProxmoxAccess $client) {}
+
     /**
      * API version details, including some parts of the global datacenter config.
      *
@@ -15,7 +17,7 @@ class ProxmoxNode extends Proxmox
      */
     public function version(): array
     {
-        $response = $this->makeRequest('GET', 'version');
+        $response = $this->client->get('version');
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'version fetch fail!');
@@ -31,7 +33,7 @@ class ProxmoxNode extends Proxmox
      */
     public function getNodes(): array
     {
-        $response = $this->makeRequest('GET', 'nodes');
+        $response = $this->client->get('nodes');
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'nodes fetch fail!');
@@ -838,7 +840,7 @@ class ProxmoxNode extends Proxmox
      */
     public function createQemuFirewallRule(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/firewall/rules", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/rules", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(true, 'Created Firewall', $response['data']);
@@ -853,7 +855,7 @@ class ProxmoxNode extends Proxmox
      */
     public function listQemuFirewallRule(string $node, int $vmid)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/firewall/rules");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/rules");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'List Firewall fail!');
@@ -869,7 +871,7 @@ class ProxmoxNode extends Proxmox
      */
     public function removeQemuFirewallRule(string $node, int $vmid, $pos)
     {
-        $response = $this->makeRequest('DELETE', "nodes/$node/qemu/$vmid/firewall/rules/$pos");
+        $response = $this->client->delete("nodes/$node/qemu/$vmid/firewall/rules/$pos");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(true, 'Removed Firewall', $response['data']);
@@ -2079,7 +2081,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuFirewall($node, $vmid)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/firewall");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/firewall");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'firewall aliases fail!');
@@ -2096,7 +2098,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuFirewallAliases($node, $vmid)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/firewall/aliases");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/aliases");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'firewall aliases fail!');
@@ -2114,7 +2116,7 @@ class ProxmoxNode extends Proxmox
      */
     public function createQemuFirewallAliase(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/firewall/aliases", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/aliases", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Create IP or Network Alias fail!');
@@ -2132,7 +2134,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuFirewallAliasesName(string $node, int $vmid, string $name)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/firewall/aliases/$name");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/aliases/$name");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Read Alias fail!');
@@ -2151,7 +2153,7 @@ class ProxmoxNode extends Proxmox
      */
     public function updateQemuFirewallAliaseName(string $node, int $vmid, string $name, array $data)
     {
-        $response = $this->makeRequest('PUT', "nodes/$node/qemu/$vmid/firewall/aliases/$name", $data);
+        $response = $this->client->put("nodes/$node/qemu/$vmid/firewall/aliases/$name", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Read Alias fail!');
@@ -2169,7 +2171,7 @@ class ProxmoxNode extends Proxmox
      */
     public function deleteQemuFirewallAliaseName(string $node, int $vmid, string $name)
     {
-        $response = $this->makeRequest('DELETE', "nodes/$node/qemu/$vmid/firewall/aliases/$name", null);
+        $response = $this->client->delete("nodes/$node/qemu/$vmid/firewall/aliases/$name", null);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Remove IP or Network fail!');
@@ -2186,7 +2188,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuFirewallIpset(string $node, int $vmid)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/firewall/ipset");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/ipset");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'List IPSets fail!');
@@ -2204,7 +2206,7 @@ class ProxmoxNode extends Proxmox
      */
     public function createQemuFirewallIpset(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/firewall/ipset", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/ipset", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'List IPSets fail!');
@@ -2222,7 +2224,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuFirewallIpsetName(string $node, int $vmid, string $name)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/firewall/ipset/$name");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/ipset/$name");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'List IPSet fail!');
@@ -2241,7 +2243,7 @@ class ProxmoxNode extends Proxmox
      */
     public function addQemuFirewallIpsetName(string $node, int $vmid, string $name, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/firewall/ipset/$name", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/ipset/$name", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Add IP or Network fail!');
@@ -2259,7 +2261,7 @@ class ProxmoxNode extends Proxmox
      */
     public function deleteQemuFirewallIpsetName(string $node, int $vmid, string $name)
     {
-        $response = $this->makeRequest('DELETE', "nodes/$node/qemu/$vmid/firewall/ipset/$name", null);
+        $response = $this->client->delete("nodes/$node/qemu/$vmid/firewall/ipset/$name", null);
 
         if (array_key_exists('data', $response) && is_null($response['data'])) {
             return ResponseHelper::generate(true, 'Delete successfully', $response['data']);
@@ -2279,7 +2281,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/firewall/ipset/$name/$cidr");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/ipset/$name/$cidr");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Read IP or Network settings from IPSet fail!');
@@ -2299,7 +2301,7 @@ class ProxmoxNode extends Proxmox
      */
     public function updateQemuFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr, array $data)
     {
-        $response = $this->makeRequest('PUT', "nodes/$node/qemu/$vmid/firewall/ipset/$name/$cidr", $data);
+        $response = $this->client->put("nodes/$node/qemu/$vmid/firewall/ipset/$name/$cidr", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Update IP or Network fail!');
@@ -2318,7 +2320,7 @@ class ProxmoxNode extends Proxmox
      */
     public function deleteQemuFirewallIpsetNameCidr(string $node, int $vmid, string $name, string $cidr)
     {
-        $response = $this->makeRequest('DELETE', "nodes/$node/qemu/$vmid/firewall/ipset/$name/$cidr", null);
+        $response = $this->client->delete("nodes/$node/qemu/$vmid/firewall/ipset/$name/$cidr", null);
 
         if (array_key_exists('data', $response) && is_null($response['data'])) {
             return ResponseHelper::generate(true, 'Delete successfully', $response['data']);
@@ -2336,7 +2338,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuFirewallRules(string $node, int $vmid)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/firewall/rules");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/rules");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'node vms fail!');
@@ -2354,7 +2356,7 @@ class ProxmoxNode extends Proxmox
      */
     public function createQemuFirewallRules(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/firewall/rules", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/firewall/rules", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Create new rule fail!');
@@ -2371,7 +2373,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuFirewallRulesPos($node, $vmid, $pos)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/firewall/rules/$pos");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/rules/$pos");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Get single rule fail!');
@@ -2389,7 +2391,7 @@ class ProxmoxNode extends Proxmox
      */
     public function updateQemuFirewallRulesPos(string $node, int $vmid, $pos, array $data)
     {
-        $response = $this->makeRequest('PUT', "nodes/$node/qemu/$vmid/firewall/rules/$pos", $data);
+        $response = $this->client->put("nodes/$node/qemu/$vmid/firewall/rules/$pos", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Modify rule fail!');
@@ -2406,7 +2408,7 @@ class ProxmoxNode extends Proxmox
      */
     public function deleteQemuFirewallRulesPos(string $node, int $vmid, $pos)
     {
-        $response = $this->makeRequest('DELETE', "nodes/$node/qemu/$vmid/firewall/rules/$pos", null);
+        $response = $this->client->delete("nodes/$node/qemu/$vmid/firewall/rules/$pos", null);
 
         if (array_key_exists('data', $response) && is_null($response['data'])) {
             return ResponseHelper::generate(true, 'Delete successfully', $response['data']);
@@ -2428,7 +2430,7 @@ class ProxmoxNode extends Proxmox
         $optional['limit'] = !empty($limit) ? $limit : 50;
         $optional['start'] = !empty($start) ? $start : 0;
 
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/firewall/log", $optional);
+        $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/log", $optional);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Read firewalls fail!');
@@ -2445,7 +2447,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuFirewallOptions(string $node, int $vmid)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/firewall/options");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/options");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Get VM firewall options fail!');
@@ -2463,7 +2465,7 @@ class ProxmoxNode extends Proxmox
      */
     public function setQemuFirewallOptions(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('PUT', "/nodes/$node/qemu/$vmid/firewall/options", $data);
+        $response = $this->client->put("/nodes/$node/qemu/$vmid/firewall/options", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Set firewall options fail!');
@@ -2480,7 +2482,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuFirewallRefs(string $node, int $vmid)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/firewall/refs");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/firewall/refs");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Lists possible IPSet/Alias fail!');
@@ -2497,7 +2499,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuSnapshot(string $node, int $vmid)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/snapshot");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/snapshot");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'List all snapshots fail!');
@@ -2515,7 +2517,7 @@ class ProxmoxNode extends Proxmox
      */
     public function createQemuSnapshot(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/snapshot", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/snapshot", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Snapshot a VM fail!');
@@ -2533,7 +2535,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuSnapname(string $node, int $vmid, string $snapname)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/snapshot/$snapname");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/snapshot/$snapname");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Snapshot fail!');
@@ -2551,7 +2553,7 @@ class ProxmoxNode extends Proxmox
      */
     public function deleteQemuSnapshot($node, $vmid, $snapname)
     {
-        $response = $this->makeRequest('DELETE', "nodes/$node/qemu/$vmid/snapshot/$snapname");
+        $response = $this->client->delete("nodes/$node/qemu/$vmid/snapshot/$snapname");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Delete fail!');
@@ -2569,7 +2571,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuSnapnameConfig(string $node, int $vmid, $snapname)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/snapshot/$snapname/config");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/snapshot/$snapname/config");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Get snapshot configuration fail!');
@@ -2588,7 +2590,7 @@ class ProxmoxNode extends Proxmox
      */
     public function updateQemuSnapshotConfig(string $node, int $vmid, $snapname, array $data)
     {
-        $response = $this->makeRequest('PUT', "/nodes/$node/qemu/$vmid/snapshot/$snapname/config", $data);
+        $response = $this->client->put("/nodes/$node/qemu/$vmid/snapshot/$snapname/config", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Update snapshot metadata fail!');
@@ -2607,7 +2609,7 @@ class ProxmoxNode extends Proxmox
      */
     public function QemuSnapshotRollback($node, $vmid, $snapname, $data = array())
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/snapshot/$snapname/rollback", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/snapshot/$snapname/rollback", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Rollback snapshot fail!');
@@ -2624,7 +2626,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuStatus(string $node, int $vmid)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/status");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/status");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'status fail!');
@@ -2641,7 +2643,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuCurrent(string $node, int $vmid)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/status/current");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/status/current");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Get virtual machine status fail!');
@@ -2659,7 +2661,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuResume(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/status/resume", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/status/resume", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Resume virtual machine fail!');
@@ -2677,7 +2679,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuReset(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/status/reset", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/status/reset", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Reset virtual machine fail!');
@@ -2695,7 +2697,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuShutdown(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/status/shutdown", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/status/shutdown", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Shutdown virtual machine fail!');
@@ -2713,7 +2715,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuStart(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/status/start", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/status/start", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Started virtual machine fail!');
@@ -2731,7 +2733,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuStop(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/status/stop", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/status/stop", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Stop virtual machine fail!');
@@ -2749,7 +2751,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuReboot(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/status/reboot", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/status/reboot", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Reboot virtual machine fail!');
@@ -2767,7 +2769,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuSuspend(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/status/suspend", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/status/suspend", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Reboot virtual machine fail!');
@@ -2785,7 +2787,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuAgent(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/status/agent", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/status/agent", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Execute Qemu Guest Agent commands fail!');
@@ -2803,7 +2805,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuAgentExec(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/agent/exec", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/agent/exec", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Execute command via Qemu Guest Agent fail!');
@@ -2820,7 +2822,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuAgentSetUserPassword(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/agent/set-user-password", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/agent/set-user-password", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Change user password fail!');
@@ -2838,7 +2840,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuClone(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/clone", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/clone", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Create a copy of virtual machine/template fail!');
@@ -2855,7 +2857,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuConfig(string $node, int $vmid)
     {
-        $response = $this->makeRequest('GET', "/nodes/$node/qemu/$vmid/config");
+        $response = $this->client->get("/nodes/$node/qemu/$vmid/config");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Get current virtual machine configuration fail!');
@@ -2873,7 +2875,7 @@ class ProxmoxNode extends Proxmox
      */
     public function createQemuConfig(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/config", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/config", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Set virtual machine configuration fail!');
@@ -2890,7 +2892,7 @@ class ProxmoxNode extends Proxmox
      */
     public function setQemuConfig(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('PUT', "nodes/$node/qemu/$vmid/config", $data);
+        $response = $this->client->put("nodes/$node/qemu/$vmid/config", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Set virtual machine options fail!');
@@ -2907,7 +2909,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuFeature(string $node, int $vmid)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/feature");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/feature");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Check if feature for virtual machine is available fail!');
@@ -2925,7 +2927,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuMigrate(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/migrate", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/migrate", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Migrate virtual machine fail!');
@@ -2943,7 +2945,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuMonitor(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/monitor", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/monitor", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Execute Qemu monitor commands fail!');
@@ -2961,7 +2963,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuMoveDisk(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/move_disk", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/move_disk", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Move volume to different storage fail!');
@@ -2978,7 +2980,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuPending(string $node, int $vmid)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/pending");
+        $response = $this->client->get("nodes/$node/qemu/$vmid/pending");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Get virtual machine configuration, including pending changes fail!');
@@ -2996,7 +2998,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuResize(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('PUT', "nodes/$node/qemu/$vmid/resize", $data);
+        $response = $this->client->put("nodes/$node/qemu/$vmid/resize", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Extend volume size fail!');
@@ -3018,7 +3020,7 @@ class ProxmoxNode extends Proxmox
         $optional['ds'] = !empty($ds) ? $ds : null;
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
 
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/rrd", $optional);
+        $response = $this->client->get("nodes/$node/qemu/$vmid/rrd", $optional);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Read VM RRD statistics fail!');
@@ -3038,7 +3040,7 @@ class ProxmoxNode extends Proxmox
     {
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
 
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/rrddata", $optional);
+        $response = $this->client->get("nodes/$node/qemu/$vmid/rrddata", $optional);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Read VM RRD statistics fail!');
@@ -3056,7 +3058,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuSendkey(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('PUT', "nodes/$node/qemu/$vmid/sendkey", $data);
+        $response = $this->client->put("nodes/$node/qemu/$vmid/sendkey", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Read VM RRD statistics fail!');
@@ -3074,7 +3076,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuSpiceproxy(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/spiceproxy", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/spiceproxy", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Returns a SPICE configuration fail!');
@@ -3092,7 +3094,7 @@ class ProxmoxNode extends Proxmox
      */
     public function createQemuTemplate(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/template", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/template", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Returns a SPICE configuration fail!');
@@ -3110,7 +3112,7 @@ class ProxmoxNode extends Proxmox
      */
     public function qemuUnlink(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('PUT', "/nodes/$node/qemu/$vmid/unlink", $data);
+        $response = $this->client->put("/nodes/$node/qemu/$vmid/unlink", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Unlink/delete disk images fail!');
@@ -3128,7 +3130,7 @@ class ProxmoxNode extends Proxmox
      */
     public function createQemuVncproxy(string $node, int $vmid, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/qemu/$vmid/vncproxy", $data);
+        $response = $this->client->post("nodes/$node/qemu/$vmid/vncproxy", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Unlink/delete disk images fail!');
@@ -3149,7 +3151,7 @@ class ProxmoxNode extends Proxmox
         $optional['port'] = !empty($port) ? $port : null;
         $optional['vncticket'] = !empty($vncticket) ? $vncticket : null;
 
-        $response = $this->makeRequest('GET', "nodes/$node/qemu/$vmid/vncwebsocket", $optional);
+        $response = $this->client->get("nodes/$node/qemu/$vmid/vncwebsocket", $optional);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Opens a weksocket for VNC traffic fail!');
@@ -3166,7 +3168,7 @@ class ProxmoxNode extends Proxmox
      */
     public function replication(string $node)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/replication");
+        $response = $this->client->get("nodes/$node/replication");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'List HA resources fail!');
@@ -3184,7 +3186,7 @@ class ProxmoxNode extends Proxmox
      */
     public function replicationId(string $node, string $id)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/replication/$id");
+        $response = $this->client->get("nodes/$node/replication/$id");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Read replication job configuration fail!');
@@ -3202,7 +3204,7 @@ class ProxmoxNode extends Proxmox
      */
     public function replicationLog(string $node, string $id)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/replication/$id/log");
+        $response = $this->client->get("nodes/$node/replication/$id/log");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Read replication job log fail!');
@@ -3221,7 +3223,7 @@ class ProxmoxNode extends Proxmox
      */
     public function replicationScheduleNow(string $node, string $id, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/replication/$id/schedule_now", $data);
+        $response = $this->client->post("nodes/$node/replication/$id/schedule_now", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Schedule replication job to start as soon as possible fail!');
@@ -3239,7 +3241,7 @@ class ProxmoxNode extends Proxmox
      */
     public function replicationStatus(string $node, string $id)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/replication/$id/status");
+        $response = $this->client->get("nodes/$node/replication/$id/status");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'replication job status fail!');
@@ -3256,7 +3258,7 @@ class ProxmoxNode extends Proxmox
      */
     public function scan(string $node)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/scan");
+        $response = $this->client->get("nodes/$node/scan");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'available scan methods fail!');
@@ -3273,7 +3275,7 @@ class ProxmoxNode extends Proxmox
      */
     public function scanGlusterfs(string $node)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/scan/glusterfs");
+        $response = $this->client->get("nodes/$node/scan/glusterfs");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Scan remote GlusterFS server fail!');
@@ -3290,7 +3292,7 @@ class ProxmoxNode extends Proxmox
      */
     public function scanIscsi(string $node)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/scan/iscsi");
+        $response = $this->client->get("nodes/$node/scan/iscsi");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Scan remote iSCSI server fail!');
@@ -3307,7 +3309,7 @@ class ProxmoxNode extends Proxmox
      */
     public function scanLvm($node)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/scan/lvm");
+        $response = $this->client->get("nodes/$node/scan/lvm");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'List local LVM volume groups fail!');
@@ -3846,7 +3848,7 @@ class ProxmoxNode extends Proxmox
      */
     public function getVMs(string $node): array
     {
-        $response = $this->makeRequest('GET', "nodes/{$node}/qemu");
+        $response = $this->client->get("nodes/{$node}/qemu");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'node vms fail!');
@@ -3905,7 +3907,7 @@ class ProxmoxNode extends Proxmox
         $config = ['cpu' => 'x86-64-v2-AES'];
 
         // Create VM and get response
-        $response = $this->makeRequest('POST', "nodes/{$node}/qemu", $params);
+        $response = $this->client->post("nodes/{$node}/qemu", $params);
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'VM create fail!');
         }
@@ -3923,7 +3925,7 @@ class ProxmoxNode extends Proxmox
 
     protected function configVM(string $node, int $vmId, array $params): array
     {
-        return $this->makeRequest('PUT', "nodes/{$node}/qemu/{$vmId}/config", $params);
+        return $this->client->put("nodes/{$node}/qemu/{$vmId}/config", $params);
     }
 
     public function createStorage(array $params): array
@@ -3936,7 +3938,7 @@ class ProxmoxNode extends Proxmox
             }
         }
 
-        $response = $this->makeRequest('POST', 'storage', $params);
+        $response = $this->client->post('storage', $params);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'storage create fail!');
@@ -3946,7 +3948,7 @@ class ProxmoxNode extends Proxmox
 
     public function checkTaskStatus(string $node, string $upid)
     {
-        $status = $this->makeRequest('GET', "nodes/{$node}/tasks/{$upid}/status");
+        $status = $this->client->get("nodes/{$node}/tasks/{$upid}/status");
 
         if ($status['data']['status'] === 'stopped') {
             if ($status['data']['exitstatus'] === 'OK') {
@@ -3963,7 +3965,7 @@ class ProxmoxNode extends Proxmox
     {
         do {
             // Poll task status
-            $status = $this->makeRequest('GET', "nodes/{$node}/tasks/{$upid}/status");
+            $status = $this->client->get("nodes/{$node}/tasks/{$upid}/status");
 
             if ($status['data']['status'] === 'stopped') {
                 if ($status['data']['exitstatus'] === 'OK') {
@@ -3988,7 +3990,7 @@ class ProxmoxNode extends Proxmox
      */
     public function getVMStatus(string $node, int $vmid): array
     {
-        $response = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/status/current");
+        $response = $this->client->get("nodes/{$node}/qemu/{$vmid}/status/current");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'VM status check fail!');
@@ -4016,7 +4018,7 @@ class ProxmoxNode extends Proxmox
      */
     public function startVM(string $node, int $vmid)
     {
-        $response = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/status/start");
+        $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/start");
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'VM start fail!');
         }
@@ -4039,7 +4041,7 @@ class ProxmoxNode extends Proxmox
      */
     public function stopVM(string $node, int $vmid)
     {
-        $response = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/status/stop");
+        $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/stop");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'VM stop fail!');
@@ -4062,7 +4064,7 @@ class ProxmoxNode extends Proxmox
      */
     public function resetVM(string $node, int $vmid)
     {
-        $response = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/status/reset");
+        $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/reset");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'VM reset fail!');
@@ -4086,7 +4088,7 @@ class ProxmoxNode extends Proxmox
      */
     public function statusVM(string $node, int $vmid)
     {
-        $response = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/status/current");
+        $response = $this->client->get("nodes/{$node}/qemu/{$vmid}/status/current");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'VM status fail!');
@@ -4110,7 +4112,7 @@ class ProxmoxNode extends Proxmox
      */
     public function rebootVM(string $node, int $vmid)
     {
-        $response = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/status/reboot");
+        $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/reboot");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'VM reboot fail!');
@@ -4134,7 +4136,7 @@ class ProxmoxNode extends Proxmox
      */
     public function shutdownVM(string $node, int $vmid)
     {
-        $response = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/status/shutdown");
+        $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/shutdown");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'VM shutdown fail!');
@@ -4158,7 +4160,7 @@ class ProxmoxNode extends Proxmox
      */
     public function resumeVM(string $node, int $vmid)
     {
-        $response = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/status/resume");
+        $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/resume");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'VM resume fail!');
@@ -4182,7 +4184,7 @@ class ProxmoxNode extends Proxmox
      */
     public function suspendVM(string $node, int $vmid)
     {
-        $response = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/status/suspend");
+        $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/suspend");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'VM suspend fail!');
@@ -4209,7 +4211,7 @@ class ProxmoxNode extends Proxmox
     {
         try {
             // First, check if VM exists
-            $vmStatus = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/status/current");
+            $vmStatus = $this->client->get("nodes/{$node}/qemu/{$vmid}/status/current");
 
             if (!isset($vmStatus['data'])) {
                 return [
@@ -4248,25 +4250,25 @@ class ProxmoxNode extends Proxmox
     {
         try {
             // 1. First ensure agent is enabled in config with correct settings
-            $configResult = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/config", [
+            $configResult = $this->client->post("nodes/{$node}/qemu/{$vmid}/config", [
                 'agent' => 'enabled=1',
                 'ostype' => 'l26'  // Linux 2.6+ kernel
             ]);
 
             // 2. Get current VM status
-            $vmStatus = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/status/current");
+            $vmStatus = $this->client->get("nodes/{$node}/qemu/{$vmid}/status/current");
             $isRunning = isset($vmStatus['data']['status']) && $vmStatus['data']['status'] === 'running';
 
             // 3. If VM is running, need to restart it
             if ($isRunning) {
                 // Stop VM
-                $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/status/stop");
+                $this->client->post("nodes/{$node}/qemu/{$vmid}/status/stop");
 
                 // Wait for VM to stop
                 sleep(15);
 
                 // Start VM
-                $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/status/start");
+                $this->client->post("nodes/{$node}/qemu/{$vmid}/status/start");
 
                 // Wait for VM to start
                 sleep(20);
@@ -4274,7 +4276,7 @@ class ProxmoxNode extends Proxmox
 
             // 4. Check agent status after restart
             try {
-                $agentStatus = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/agent/ping");
+                $agentStatus = $this->client->get("nodes/{$node}/qemu/{$vmid}/agent/ping");
                 $agentRunning = true;
             } catch (Exception $e) {
                 $agentRunning = false;
@@ -4305,14 +4307,14 @@ class ProxmoxNode extends Proxmox
     {
         try {
             // Get VM configuration
-            $config = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/config");
+            $config = $this->client->get("nodes/{$node}/qemu/{$vmid}/config");
 
             // Get current status
-            $status = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/status/current");
+            $status = $this->client->get("nodes/{$node}/qemu/{$vmid}/status/current");
 
             // Try to ping agent
             try {
-                $ping = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/agent/ping");
+                $ping = $this->client->get("nodes/{$node}/qemu/{$vmid}/agent/ping");
                 $agentResponding = true;
             } catch (Exception $e) {
                 $agentResponding = false;
@@ -4346,7 +4348,7 @@ class ProxmoxNode extends Proxmox
                 'ostype' => 'l26'  // Linux 2.6+/3.x/4.x Kernel
             ];
 
-            $result = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/config", $config);
+            $result = $this->client->post("nodes/{$node}/qemu/{$vmid}/config", $config);
 
             return [
                 'success' => true,
@@ -4366,24 +4368,24 @@ class ProxmoxNode extends Proxmox
     {
         try {
             // First, enable the QEMU guest agent in VM config
-            $configResult = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/config", [
+            $configResult = $this->client->post("nodes/{$node}/qemu/{$vmid}/config", [
                 'agent' => 'enabled=1,fstrim_cloned_disks=1',
                 'ostype' => 'l26'  // For Linux VMs
             ]);
 
             // Stop the VM if it's running
-            $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/status/stop");
+            $this->client->post("nodes/{$node}/qemu/{$vmid}/status/stop");
 
             // Wait for VM to stop
             sleep(10);
 
             // Start the VM to apply changes
-            $startResult = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/status/start");
+            $startResult = $this->client->post("nodes/{$node}/qemu/{$vmid}/status/start");
 
             // Check agent status (might take a few seconds to initialize)
             sleep(20);  // Wait for VM to fully start
 
-            $status = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/agent/ping");
+            $status = $this->client->get("nodes/{$node}/qemu/{$vmid}/agent/ping");
 
             return [
                 'success' => true,
@@ -4404,11 +4406,11 @@ class ProxmoxNode extends Proxmox
     {
         try {
             // Get VM status including agent info
-            $status = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/status/current");
+            $status = $this->client->get("nodes/{$node}/qemu/{$vmid}/status/current");
 
             // Try to ping the agent
             try {
-                $ping = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/agent/ping");
+                $ping = $this->client->get("nodes/{$node}/qemu/{$vmid}/agent/ping");
                 $agentRunning = true;
             } catch (Exception $e) {
                 $agentRunning = false;
@@ -4459,7 +4461,7 @@ class ProxmoxNode extends Proxmox
             }
 
             // Apply network configuration
-            $result = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/config", $netConfig);
+            $result = $this->client->post("nodes/{$node}/qemu/{$vmid}/config", $netConfig);
 
             return [
                 'success' => true,
@@ -4477,7 +4479,7 @@ class ProxmoxNode extends Proxmox
      */
     public function setVMPassword(string $node, int $vmid)
     {
-        $response = $this->makeRequest('POST', "/nodes/{$node}/qemu/{$vmid}/config", [
+        $response = $this->client->post("/nodes/{$node}/qemu/{$vmid}/config", [
             'ciuser' => 'root',
             'cipassword' => 'Password@@24'
         ]);
@@ -4496,7 +4498,7 @@ class ProxmoxNode extends Proxmox
      */
     private function getNextVMID(): int
     {
-        $response = $this->makeRequest('GET', 'cluster/nextid');
+        $response = $this->client->get('cluster/nextid');
 
         if (!isset($response['data'])) {
             throw new Exception('Failed to get next VMID');
@@ -4580,7 +4582,7 @@ class ProxmoxNode extends Proxmox
 
         try {
             // Get current VM configuration
-            $config = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/config");
+            $config = $this->client->get("nodes/{$node}/qemu/{$vmid}/config");
 
             // Find next available SCSI disk ID
             $nextId = 0;
@@ -4621,7 +4623,7 @@ class ProxmoxNode extends Proxmox
             }
 
             // Apply configuration
-            $result = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/config", $diskParams);
+            $result = $this->client->post("nodes/{$node}/qemu/{$vmid}/config", $diskParams);
 
             if (!isset($result['data'])) {
                 return ResponseHelper::generate(false, "Failed to attach disk: No response data received");
@@ -4647,7 +4649,7 @@ class ProxmoxNode extends Proxmox
     {
         try {
             // API endpoint to remove a disk
-            $result = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/config", [
+            $result = $this->client->post("nodes/{$node}/qemu/{$vmid}/config", [
                 'delete' => $disk, // Specify the disk to delete (e.g., 'scsi0')
                 'force' => $type
             ]);
@@ -4717,7 +4719,7 @@ class ProxmoxNode extends Proxmox
     public function attachSSHKey(string $node, int $vmid, string $publicKey): array
     {
         // First check if VM exists and uses cloud-init
-        $vmConfig = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/config");
+        $vmConfig = $this->client->get("nodes/{$node}/qemu/{$vmid}/config");
 
         if (!isset($vmConfig['data'])) {
             throw new Exception("VM {$vmid} not found on node {$node}");
@@ -4785,7 +4787,7 @@ class ProxmoxNode extends Proxmox
             "ipconfig0" => "ip={$ip}/{$netmask},gw={$gateway}"
         ];
 
-        $response = $this->makeRequest('PUT', "nodes/{$node}/qemu/{$vmid}/config", $params);
+        $response = $this->client->put("nodes/{$node}/qemu/{$vmid}/config", $params);
 
         if (!isset($response['data'])) {
             $successResponse = [
@@ -4805,7 +4807,7 @@ class ProxmoxNode extends Proxmox
      */
     public function updateVmConfig(string $node, int $vmid, $params)
     {
-        $response = $this->makeRequest('PUT', "nodes/{$node}/qemu/{$vmid}/config", $params);
+        $response = $this->client->put("nodes/{$node}/qemu/{$vmid}/config", $params);
 
         if (!isset($response['data'])) {
             $successResponse = [
@@ -4827,7 +4829,7 @@ class ProxmoxNode extends Proxmox
             'disk' => 'scsi0', // Disk you want to resize (e.g., scsi0, virtio0)
             'size' => '+10G',  // Size to add (e.g., +10G for 10GB)
         ];
-        $response = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/config", $params);
+        $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/config", $params);
 
         if (!isset($response['data'])) {
             $successResponse = [
@@ -4845,7 +4847,7 @@ class ProxmoxNode extends Proxmox
     public function fetchAvailableIPs($node)
     {
 //        $params = ['type' => 'bridge'];
-        $response = $this->makeRequest('GET', "nodes/{$node}/network");
+        $response = $this->client->get("nodes/{$node}/network");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Network list fail!', $response['data']);
@@ -4856,7 +4858,7 @@ class ProxmoxNode extends Proxmox
 
     public function applyCloudInitVM($node, $vmid)
     {
-        return $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/cloudinit");
+        return $this->client->post("nodes/{$node}/qemu/{$vmid}/cloudinit");
     }
 
     /**
@@ -4868,7 +4870,7 @@ class ProxmoxNode extends Proxmox
      */
     public function destroyVm($node, $vmid, $data = array())
     {
-        $response = $this->makeRequest('DELETE', "nodes/$node/qemu/$vmid", $data);
+        $response = $this->client->delete("nodes/$node/qemu/$vmid", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Destroy the vm fail!', $response['data']);
@@ -4888,7 +4890,7 @@ class ProxmoxNode extends Proxmox
     public function deleteVM(string $node, int $vmid, bool $force = false, bool $purge = true)
     {
         // Check if VM exists
-        $vmStatus = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/status/current");
+        $vmStatus = $this->client->get("nodes/{$node}/qemu/{$vmid}/status/current");
 
         if (!isset($vmStatus['data'])) {
             throw new Exception("VM {$vmid} not found on node {$node}");
@@ -4908,7 +4910,7 @@ class ProxmoxNode extends Proxmox
             $start = time();
             do {
                 sleep(2);
-                $currentStatus = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/status/current");
+                $currentStatus = $this->client->get("nodes/{$node}/qemu/{$vmid}/status/current");
                 if ($currentStatus['data']['status'] === 'stopped') {
                     break;
                 }
@@ -4928,7 +4930,7 @@ class ProxmoxNode extends Proxmox
         }
 
         try {
-            $response = $this->makeRequest('DELETE', "nodes/$node/qemu/$vmid", $params);
+            $response = $this->client->delete("nodes/$node/qemu/$vmid", $params);
             $successResponse = [
                 'data' => $response['data'],
                 'node' => $node,
@@ -4975,7 +4977,7 @@ class ProxmoxNode extends Proxmox
         ];
 
         try {
-            $response = $this->makeRequest('POST', "/nodes/{$node}/qemu/{$vmid}/config", $params);
+            $response = $this->client->post("/nodes/{$node}/qemu/{$vmid}/config", $params);
             $successResponse = [
                 'data' => $response['data'],
                 'node' => $node,
@@ -5004,13 +5006,13 @@ class ProxmoxNode extends Proxmox
         }
 
         $url = "/nodes/{$node}/qemu/{$vmid}/config";
-        return $this->makeRequest('POST', "{$this->baseUrl}{$url}", $payload);
+        return $this->client->post("{$this->baseUrl}{$url}", $payload);
     }
 
     public function rebuildCloudInit($node, $vmid)
     {
         $url = "/nodes/{$node}/qemu/{$vmid}/cloudinit";
-        return $this->makeRequest('POST', "{$this->baseUrl}{$url}");
+        return $this->client->post("{$this->baseUrl}{$url}");
 
         // Usage
         /*try {
@@ -5038,7 +5040,7 @@ class ProxmoxNode extends Proxmox
      */
     public function diskList(string $node)
     {
-        $response = $this->makeRequest('GET', "nodes/{$node}/disks");
+        $response = $this->client->get("nodes/{$node}/disks");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Disk list failed!', $response['data']);
@@ -5059,7 +5061,7 @@ class ProxmoxNode extends Proxmox
      */
     public function diskTypeList(string $node, string $type)
     {
-        $response = $this->makeRequest('GET', "nodes/{$node}/disks/{$type}");
+        $response = $this->client->get("nodes/{$node}/disks/{$type}");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Disk fetch failed!', $response['data']);
@@ -5080,7 +5082,7 @@ class ProxmoxNode extends Proxmox
      */
     public function createDiskType(string $node, string $type, array $params)
     {
-        $response = $this->makeRequest('POST', "nodes/{$node}/disks/{$type}", $params);
+        $response = $this->client->post("nodes/{$node}/disks/{$type}", $params);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Disk fetch failed!', $response['data']);
@@ -5101,7 +5103,7 @@ class ProxmoxNode extends Proxmox
      */
     public function deleteDiskType(string $node, string $type, $name)
     {
-        $response = $this->makeRequest('DELETE', "nodes/{$node}/disks/{$type}/{$name}");
+        $response = $this->client->delete("nodes/{$node}/disks/{$type}/{$name}");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Disk delete failed!', $response['data']);
@@ -5122,7 +5124,7 @@ class ProxmoxNode extends Proxmox
     public function vmMonitor(string $node, int $vmid, $params)
     {
         $params = ['command' => 'info'];
-        $response = $this->makeRequest('POST', "nodes/{$node}/qemu/{$vmid}/monitor", $params);
+        $response = $this->client->post("nodes/{$node}/qemu/{$vmid}/monitor", $params);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Failed to fetch monitoring data!', $response['data']);
@@ -5144,7 +5146,7 @@ class ProxmoxNode extends Proxmox
     {
         try {
             // Fixed URL by removing extra curly brace
-            $response = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/rrddata", $params);
+            $response = $this->client->get("nodes/{$node}/qemu/{$vmid}/rrddata", $params);
 
             if (!isset($response['data'])) {
                 return ResponseHelper::generate(
@@ -5184,7 +5186,7 @@ class ProxmoxNode extends Proxmox
     public function getVMMetrics(string $node, int $vmid, $params)
     {
         try {
-            $response = $this->makeRequest('GET', "nodes/{$node}/qemu/{$vmid}/rrddata", $params);
+            $response = $this->client->get("nodes/{$node}/qemu/{$vmid}/rrddata", $params);
 
             if (!isset($response['data']) || empty($response['data'])) {
                 return ResponseHelper::generate(false, 'No metrics data available', []);
@@ -5257,7 +5259,7 @@ class ProxmoxNode extends Proxmox
      */
     public function aplinfo($node)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/aplinfo");
+        $response = $this->client->get("nodes/$node/aplinfo");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'aplinfo fetch failed!', $response['data']);
@@ -5292,7 +5294,7 @@ class ProxmoxNode extends Proxmox
      */
     public function dns($node)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/dns");
+        $response = $this->client->get("nodes/$node/dns");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'dns fetch failed!', $response['data']);
@@ -5310,7 +5312,7 @@ class ProxmoxNode extends Proxmox
      */
     public function setDns($node, $data = array())
     {
-        $response = $this->makeRequest('PUT', "nodes/$node/dns", $data);
+        $response = $this->client->put("nodes/$node/dns", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'set Dns failed!', $response['data']);
@@ -5328,7 +5330,7 @@ class ProxmoxNode extends Proxmox
      */
     public function execute($node, $data = array())
     {
-        $response = $this->makeRequest('POST', "nodes/$node/execute", $data);
+        $response = $this->client->post("nodes/$node/execute", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Execute failed!', $response['data']);
@@ -5346,7 +5348,7 @@ class ProxmoxNode extends Proxmox
      */
     public function migrateAll($node, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/migrateall", $data);
+        $response = $this->client->post("nodes/$node/migrateall", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Migrate failed!', $response['data']);
@@ -5363,7 +5365,7 @@ class ProxmoxNode extends Proxmox
      */
     public function netstat($node)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/netstat");
+        $response = $this->client->get("nodes/$node/netstat");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'netstat failed!', $response['data']);
@@ -5380,7 +5382,7 @@ class ProxmoxNode extends Proxmox
      */
     public function report($node)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/report");
+        $response = $this->client->get("nodes/$node/report");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'report failed!', $response['data']);
@@ -5401,7 +5403,7 @@ class ProxmoxNode extends Proxmox
     {
         $optional['ds'] = !empty($ds) ? $ds : null;
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
-        $response = $this->makeRequest('GET', "nodes/$node/rrd", $optional);
+        $response = $this->client->get("nodes/$node/rrd", $optional);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'RRD statistics failed!', $response['data']);
@@ -5420,7 +5422,7 @@ class ProxmoxNode extends Proxmox
     public function rrddata($node, $timeframe = null)
     {
         $optional['timeframe'] = !empty($timeframe) ? $timeframe : null;
-        $response = $this->makeRequest('GET', "nodes/$node/rrddata", $optional);
+        $response = $this->client->get("nodes/$node/rrddata", $optional);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'rrddata statistics failed!', $response['data']);
@@ -5438,7 +5440,7 @@ class ProxmoxNode extends Proxmox
      */
     public function spiceShell($node, $data = array())
     {
-        $response = $this->makeRequest('GET', "nodes/$node/spiceshell", $data);
+        $response = $this->client->get("nodes/$node/spiceshell", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'SPICE shell failed!', $response['data']);
@@ -5456,7 +5458,7 @@ class ProxmoxNode extends Proxmox
      */
     public function startAll($node, $data = array())
     {
-        $response = $this->makeRequest('POST', "nodes/$node/startall", $data);
+        $response = $this->client->post("nodes/$node/startall", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Start all VMs failed!', $response['data']);
@@ -5474,7 +5476,7 @@ class ProxmoxNode extends Proxmox
      */
     public function reboot(string $node, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/status", $data);
+        $response = $this->client->post("nodes/$node/status", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Reboot node failed!', $response['data']);
@@ -5492,7 +5494,7 @@ class ProxmoxNode extends Proxmox
      */
     public function stopAll(string $node, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/stopall", $data);
+        $response = $this->client->post("nodes/$node/stopall", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Reboot node failed!', $response['data']);
@@ -5509,7 +5511,7 @@ class ProxmoxNode extends Proxmox
      */
     public function subscription(string $node)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/subscription");
+        $response = $this->client->get("nodes/$node/subscription");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'subscription node failed!', $response['data']);
@@ -5527,7 +5529,7 @@ class ProxmoxNode extends Proxmox
      */
     public function updateSubscription(string $node, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/subscription", $data);
+        $response = $this->client->post("nodes/$node/subscription", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'subscription update failed!', $response['data']);
@@ -5545,7 +5547,7 @@ class ProxmoxNode extends Proxmox
      */
     public function setSubscription(string $node, array $data)
     {
-        $response = $this->makeRequest('PUT', "nodes/$node/subscription", $data);
+        $response = $this->client->put("nodes/$node/subscription", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Set subscription failed!', $response['data']);
@@ -5571,7 +5573,7 @@ class ProxmoxNode extends Proxmox
         $optional['since'] = !empty($since) ? $since : null;
         $optional['until'] = !empty($until) ? $until : null;
 
-        $response = $this->makeRequest('GET', "nodes/$node/syslog", $optional);
+        $response = $this->client->get("nodes/$node/syslog", $optional);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Read system log failed!', $response['data']);
@@ -5588,7 +5590,7 @@ class ProxmoxNode extends Proxmox
      */
     public function time(string $node)
     {
-        $response = $this->makeRequest('GET', "nodes/$node/time");
+        $response = $this->client->get("nodes/$node/time");
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Read server time failed!', $response['data']);
@@ -5606,7 +5608,7 @@ class ProxmoxNode extends Proxmox
      */
     public function setTime(string $node, array $data)
     {
-        $response = $this->makeRequest('PUT', "nodes/$node/time", $data);
+        $response = $this->client->put("nodes/$node/time", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'PUT time zone failed!', $response['data']);
@@ -5624,7 +5626,7 @@ class ProxmoxNode extends Proxmox
      */
     public function createVNCShell(string $node, array $data)
     {
-        $response = $this->makeRequest('POST', "nodes/$node/vncshell", $data);
+        $response = $this->client->post("nodes/$node/vncshell", $data);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Creates a VNC Shell proxy failed!', $response['data']);
@@ -5645,7 +5647,7 @@ class ProxmoxNode extends Proxmox
         $optional['port'] = !empty($port) ? $port : null;
         $optional['vncticket'] = !empty($vncticket) ? $vncticket : null;
 
-        $response = $this->makeRequest('GET', "nodes/$node/vncwebsocket", $optional);
+        $response = $this->client->get("nodes/$node/vncwebsocket", $optional);
 
         if (!isset($response['data'])) {
             return ResponseHelper::generate(false, 'Opens a weksocket for VNC traffic failed!', $response['data']);
