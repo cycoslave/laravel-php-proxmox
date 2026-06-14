@@ -4977,11 +4977,11 @@ class ProxmoxNode
      * @return array
      * @throws Exception
      */
-    public function generateSSHKey($path)
+    public function generateSSHKey(string $path, string $name)
     {
-        $name = preg_replace('/[^a-z0-9]+/i', '_', strtolower(request()->name));
+        $safeName = preg_replace('/[^a-z0-9]+/i', '_', strtolower($name));
         $keyPath = $path;
-        $keyName = $name;
+        $keyName = $safeName;
         $fullPath = "{$keyPath}/{$keyName}";
         $escapedPath = escapeshellarg($fullPath);
 
