@@ -4775,18 +4775,19 @@ class ProxmoxNode
     /**
      * @throws Exception
      */
-    public function setVMPassword(string $node, int $vmid)
+    public function setVMPassword(string $node, int $vmid, #[\SensitiveParameter] string $password, string $user = 'root')
     {
         $this->validateSegment($node, 'node');
         $response = $this->client->post("/nodes/{$node}/qemu/{$vmid}/config", [
-            'ciuser' => 'root',
-            'cipassword' => 'Password@@24'
+            'ciuser' => $user,
+            'cipassword' => $password
         ]);
-        return $response;
-        if ($response['success']) {
-            return response()->json('SSH credentials injected successfully');
-        }
-        return response()->json('SSH credentials failed to inject!');
+        
+        return ResponseHelper::generate(
+            isset($response['data']), 
+            isset($response['data']) ? 'SSH credentials injected successfully' : 'SSH credentials failed to inject!', 
+            $response['data'] ?? null
+        );
     }
 
     /**
