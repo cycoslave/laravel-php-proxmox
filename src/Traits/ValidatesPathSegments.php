@@ -25,15 +25,15 @@ trait ValidatesPathSegments
     private function validateSegment(string $value, string $name): void
     {
         if ($value === '') {
-            throw new \InvalidArgumentException(
-                "Proxmox path segment [{$name}] must not be empty."
-            );
+            throw new \InvalidArgumentException("Proxmox path segment [{$name}] must not be empty.");
+        }
+
+        if ($value === '.' || $value === '..') {
+            throw new \InvalidArgumentException("Proxmox path segment [{$name}] cannot be a traversal indicator.");
         }
 
         if (! preg_match('/^[\w\-\.]+$/', $value)) {
-            throw new \InvalidArgumentException(
-                "Invalid Proxmox path segment for [{$name}]: [{$value}]"
-            );
+            throw new \InvalidArgumentException("Invalid Proxmox path segment for [{$name}]: [{$value}]");
         }
     }
 }
