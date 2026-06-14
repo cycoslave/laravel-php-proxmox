@@ -4993,13 +4993,16 @@ class ProxmoxNode
         // Execute ssh-keygen
         exec("ssh-keygen -t rsa -b 2048 -f {$escapedPath} -N 'pass'");
 
-
         $response = [
             'private_key_path' => $fullPath,
             'private_key' => file_get_contents($fullPath),
             'public_key_path' => $fullPath . '.pub',
             'public_key' => file_get_contents($fullPath . '.pub')
         ];
+
+        // Clean up sensitive files from local disk
+        unlink($fullPath);
+        unlink($fullPath . '.pub');
 
         return ResponseHelper::generate(true, 'SSH key generated successfully', $response);
     }
