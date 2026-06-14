@@ -4982,6 +4982,7 @@ class ProxmoxNode
         $keyPath = $path;
         $keyName = $name;
         $fullPath = "{$keyPath}/{$keyName}";
+        $escapedPath = escapeshellarg($fullPath);
 
         // Ensure directory exists
         if (!file_exists($keyPath)) {
@@ -4989,7 +4990,7 @@ class ProxmoxNode
         }
 
         // Execute ssh-keygen
-        exec("ssh-keygen -t rsa -b 2048 -f {$fullPath} -N 'pass'");
+        exec("ssh-keygen -t rsa -b 2048 -f {$escapedPath} -N 'pass'");
 
 
         $response = [
